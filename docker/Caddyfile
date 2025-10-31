@@ -1,0 +1,15 @@
+:80
+
+log
+
+route {
+        @default {
+                not path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/*
+        }
+        root * /var/www/html/public
+        php_fastcgi @default unix//tmp/php-fpm.sock {
+                trusted_proxies private_ranges
+        }
+        encode gzip
+        file_server
+}
