@@ -16,4 +16,6 @@ RUN --mount=type=secret,id=composer_auth,dst=/src/auth.json \
 
 FROM base-image AS final
 
+COPY docker/Caddyfile /etc/caddy/Caddyfile
+
 COPY --from=build --chown=82 --link /src /var/www/html
