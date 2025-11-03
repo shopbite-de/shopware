@@ -1,5 +1,5 @@
 # pin versions
-FROM ghcr.io/shopware/docker-base:8.4 as base-image
+FROM ghcr.io/shopware/docker-base:8.4-caddy as base-image
 FROM ghcr.io/friendsofshopware/shopware-cli:latest-php-8.4 as shopware-cli
 
 # build
