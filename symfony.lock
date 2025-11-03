@@ -69,6 +69,20 @@
             ".htaccess"
         ]
     },
+    "shopware/docker": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/shopware/recipes",
+            "branch": "main",
+            "version": "0.3",
+            "ref": "94a3dc9e0a50594497a755cddad0a3e0553be77d"
+        },
+        "files": [
+            "docker/Dockerfile",
+            "config/packages/docker.yaml",
+            "config/packages/prod/monolog.yaml"
+        ]
+    },
     "shopware/docker-dev": {
         "version": "0.1",
         "recipe": {

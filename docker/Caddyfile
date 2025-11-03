@@ -4,16 +4,12 @@ log
 
 route {
     @default {
-                 not path /theme/* /media/* /bundles/* /sitemap/*
-             }
+         not path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/*
+    }
     root * /var/www/html/public
     php_fastcgi @default unix//tmp/php-fpm.sock {
         trusted_proxies private_ranges
-        header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
-        header_up X-Forwarded-For {http.request.header.X-Forwarded-For}
-        header_up X-Forwarded-Host {http.request.header.X-Forwarded-Host}
-        header_up X-Forwarded-Port {http.request.header.X-Forwarded-Port}
     }
-encode gzip
+    encode gzip
     file_server
 }
