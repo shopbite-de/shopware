@@ -4,6 +4,8 @@ FROM ghcr.io/shopware/shopware-cli:latest-php-$PHP_VERSION AS shopware-cli
 
 FROM shopware-cli AS build
 
+ENV SHOPWARE_PACKAGES_TOKEN=SHOPWARE_PACKAGES_TOKEN
+
 ADD . /src
 WORKDIR /src
 
