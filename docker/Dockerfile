@@ -1,30 +1,18 @@
-# pin versions
-FROM ghcr.io/shopware/docker-base:8.4-caddy as base-image
-FROM ghcr.io/friendsofshopware/shopware-cli:latest-php-8.4 as shopware-cli
+ARG PHP_VERSION=8.4
+FROM ghcr.io/shopware/docker-base:$PHP_VERSION-caddy AS base-image
+FROM ghcr.io/shopware/shopware-cli:latest-php-$PHP_VERSION AS shopware-cli
 
-# build
+FROM shopware-cli AS build
 
-FROM shopware-cli as build
-
-COPY --link . /src
+ADD . /src
 WORKDIR /src
 
-RUN --mount=type=secret,id=composer_auth,dst=/src/auth.json \
+RUN --mount=type=secret,id=packages_token,env=SHOPWARE_PACKAGES_TOKEN \
+    --mount=type=secret,id=composer_auth,dst=/src/auth.json \
     --mount=type=cache,target=/root/.composer \
     --mount=type=cache,target=/root/.npm \
     /usr/local/bin/entrypoint.sh shopware-cli project ci /src
 
-# build final image
+FROM base-image AS final
 
-FROM base-image
-
-USER root
-
-RUN apk add --no-cache shadow && \
-    usermod -u 1000 www-data && \
-    groupmod -g 1000 www-data
-
-USER www-data
-
-COPY docker/Caddyfile /etc/caddy/Caddyfile
-COPY --from=build --chown=www-data:www-data /src /var/www/html
+COPY --from=build --chown=82 --link /src /var/www/html
