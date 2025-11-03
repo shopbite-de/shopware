@@ -9,8 +9,7 @@ ENV SHOPWARE_PACKAGES_TOKEN=SHOPWARE_PACKAGES_TOKEN
 ADD . /src
 WORKDIR /src
 
-RUN --mount=type=secret,id=packages_token,env=SHOPWARE_PACKAGES_TOKEN \
-    --mount=type=secret,id=composer_auth,dst=/src/auth.json \
+RUN --mount=type=secret,id=composer_auth,dst=/src/auth.json \
     --mount=type=cache,target=/root/.composer \
     --mount=type=cache,target=/root/.npm \
     /usr/local/bin/entrypoint.sh shopware-cli project ci /src
