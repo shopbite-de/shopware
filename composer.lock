@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a3d59530693df4e67f68f082153cc62",
+    "content-hash": "acd1c35fb0db847e3cb6935895eae523",
     "packages": [
         {
             "name": "azjezz/psl",
-            "version": "3.3.0",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "78078f2c505473d2a28319ffe426b2a82ac76790"
+                "reference": "15153a64c9824335ce11654522e7d88de762d39e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/78078f2c505473d2a28319ffe426b2a82ac76790",
-                "reference": "78078f2c505473d2a28319ffe426b2a82ac76790",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/15153a64c9824335ce11654522e7d88de762d39e",
+                "reference": "15153a64c9824335ce11654522e7d88de762d39e",
                 "shasum": ""
             },
             "require": {
@@ -26,17 +26,15 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "ext-sodium": "*",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
-                "revolt/event-loop": "^1.0.6"
+                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "revolt/event-loop": "^1.0.7"
             },
             "require-dev": {
-                "carthage-software/mago": "~0.13.1",
+                "carthage-software/mago": "^1.0.0-beta.32",
+                "infection/infection": "^0.31.2",
                 "php-coveralls/php-coveralls": "^2.7.0",
-                "php-standard-library/psalm-plugin": "^2.3.0",
-                "phpbench/phpbench": "^1.2.15",
-                "phpunit/phpunit": "^9.6.18",
-                "roave/infection-static-analysis-plugin": "^1.36.0",
-                "vimeo/psalm": "^6.0.0"
+                "phpbench/phpbench": "^1.4.0",
+                "phpunit/phpunit": "^9.6.22"
             },
             "suggest": {
                 "php-standard-library/phpstan-extension": "PHPStan integration",
@@ -70,15 +68,19 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/3.3.0"
+                "source": "https://github.com/azjezz/psl/tree/4.2.0"
             },
             "funding": [
                 {
                     "url": "https://github.com/azjezz",
                     "type": "github"
+                },
+                {
+                    "url": "https://github.com/veewee",
+                    "type": "github"
                 }
             ],
-            "time": "2025-03-03T00:07:00+00:00"
+            "time": "2025-10-25T08:31:40+00:00"
         },
         {
             "name": "brick/math",
@@ -5424,6 +5426,61 @@
                 "source": "https://github.com/Setasign/tFPDF/tree/v1.33"
             },
             "time": "2022-12-20T10:26:07+00:00"
+        },
+        {
+            "name": "shopbite-de/shopware-plugin",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shopbite-de/shopware-plugin.git",
+                "reference": "6c6857b8f684ee4c182f4699187249d3a4dd18b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shopbite-de/shopware-plugin/zipball/6c6857b8f684ee4c182f4699187249d3a4dd18b9",
+                "reference": "6c6857b8f684ee4c182f4699187249d3a4dd18b9",
+                "shasum": ""
+            },
+            "require": {
+                "azjezz/psl": "^4.2",
+                "php": "^8.4",
+                "shopware/core": "~6.7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.92",
+                "php-standard-library/psalm-plugin": "^2.3",
+                "phpunit/phpunit": "^12.5",
+                "vimeo/psalm": "^6.14"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "label": {
+                    "de-DE": "ShopBite",
+                    "en-GB": "ShopBite"
+                },
+                "shopware-plugin-class": "ShopBite\\ShopBitePlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "ShopBite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lirim Veliu",
+                    "email": "lirim@veliu.net"
+                }
+            ],
+            "description": "Shopware 6 Plugin for ShopBite Storefront",
+            "support": {
+                "issues": "https://github.com/shopbite-de/shopware-plugin/issues",
+                "source": "https://github.com/shopbite-de/shopware-plugin/tree/v1.0.0"
+            },
+            "time": "2025-12-29T21:17:11+00:00"
         },
         {
             "name": "shopware/administration",
@@ -11047,45 +11104,6 @@
             "time": "2025-12-14T11:28:47+00:00"
         },
         {
-            "name": "veliu/shopbite",
-            "version": "1.1.0",
-            "dist": {
-                "type": "path",
-                "url": "custom/static-plugins/ShopBite",
-                "reference": "f3bc9d5eb30049c3e3cd4b9e6c6e6a1ba3cc730f"
-            },
-            "require": {
-                "azjezz/psl": "^3.3",
-                "shopware/core": "~6.7.0"
-            },
-            "type": "shopware-platform-plugin",
-            "extra": {
-                "shopware-plugin-class": "Veliu\\ShopBite\\ShopBite",
-                "label": {
-                    "de-DE": "ShopBite",
-                    "en-GB": "ShopBite"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Veliu\\ShopBite\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Veliu\\ShopBite\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "veliu/shopbite",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "zircote/swagger-php",
             "version": "4.11.1",
             "source": {
@@ -11177,5 +11195,5 @@
         "composer-runtime-api": "^2.0"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

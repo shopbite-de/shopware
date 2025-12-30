@@ -3,12 +3,12 @@
     "type": "project",
     "require": {
         "composer-runtime-api": "^2.0",
+        "shopbite-de/shopware-plugin": "^1.0",
         "shopware/administration": "*",
         "shopware/core": "v6.7.*.*",
         "shopware/docker": "^0.3.0",
         "shopware/storefront": "*",
-        "symfony/flex": "~2",
-        "veliu/shopbite": "^1.1"
+        "symfony/flex": "~2"
     },
     "repositories": [
         {
