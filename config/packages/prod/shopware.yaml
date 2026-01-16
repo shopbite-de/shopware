@@ -1,9 +1,0 @@
-shopware:
-  http_cache:
-    policies:
-      custom_policy:
-        headers:
-          cache_control:
-            public: true
-            max_age: 600  # browser ttl
-            s_maxage: 3600  # reverse proxy ttl
