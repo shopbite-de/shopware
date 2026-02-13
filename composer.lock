@@ -5436,16 +5436,16 @@
         },
         {
             "name": "shopbite-de/shopware-plugin",
-            "version": "v1.3.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shopbite-de/shopware-plugin.git",
-                "reference": "485d0e6bf92a628c571010b4cc7803a9e1e788e8"
+                "reference": "93ba874bb5a37493a97bf6383a5c17579dd83066"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shopbite-de/shopware-plugin/zipball/485d0e6bf92a628c571010b4cc7803a9e1e788e8",
-                "reference": "485d0e6bf92a628c571010b4cc7803a9e1e788e8",
+                "url": "https://api.github.com/repos/shopbite-de/shopware-plugin/zipball/93ba874bb5a37493a97bf6383a5c17579dd83066",
+                "reference": "93ba874bb5a37493a97bf6383a5c17579dd83066",
                 "shasum": ""
             },
             "require": {
@@ -5485,9 +5485,9 @@
             "description": "Shopware 6 Plugin for ShopBite Storefront",
             "support": {
                 "issues": "https://github.com/shopbite-de/shopware-plugin/issues",
-                "source": "https://github.com/shopbite-de/shopware-plugin/tree/v1.3.0"
+                "source": "https://github.com/shopbite-de/shopware-plugin/tree/v1.4.0"
             },
-            "time": "2026-01-10T19:27:26+00:00"
+            "time": "2026-02-13T14:14:18+00:00"
         },
         {
             "name": "shopware/administration",
