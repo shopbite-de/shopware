@@ -3,14 +3,20 @@
     "type": "project",
     "require": {
         "composer-runtime-api": "^2.0",
+        "mollie/shopware6": "*",
         "shopbite-de/shopware-plugin": "^1.0",
         "shopware/administration": "*",
         "shopware/core": "v6.7.*.*",
         "shopware/docker": "^0.3.0",
         "shopware/storefront": "*",
+        "swag/paypal": "10.5.0",
         "symfony/flex": "~2"
     },
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mollie/Shopware6"
+        },
         {
             "type": "path",
             "url": "custom/plugins/*",
