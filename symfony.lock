@@ -95,6 +95,16 @@
             "config/packages/prod/monolog.yaml"
         ]
     },
+    "shopware/elasticsearch": {
+        "version": "6.7",
+        "recipe": {
+            "repo": "github.com/shopware/recipes",
+            "branch": "main",
+            "version": "6.7",
+            "ref": "fe34e39dbf21eec276589a9c8857084ea33918f9"
+        },
+        "files": []
+    },
     "shopware/storefront": {
         "version": "6.7",
         "recipe": {

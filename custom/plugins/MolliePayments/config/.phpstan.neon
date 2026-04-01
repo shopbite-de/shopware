@@ -1,0 +1,46 @@
+parameters:
+    level: 8
+    paths:
+        - ./../src
+    excludePaths:
+        - ./../src/Resources/*
+        - ./../src/Migration/*
+        - ./../src/Compatibility/Bundles/FlowBuilder/Events/*
+        - ./../src/Components/RefundManager/Elasticsearch/RefundAdminSearchIndexer.php
+        - ./../src/Components/Subscription/Elasticsearch/SubscriptionAdminSearchIndexer.php
+        # legacy code that is not working with abstract/interface changes
+        - ./../src/Service/Mail/MailService63.php
+    disallowedFunctionCalls:
+        - function: 'var_dump()'
+          message: 'use some logger instead'
+        - function: 'var_export()'
+          message: 'use some logger instead'
+        - function: 'dd()'
+          message: 'use some logger instead'
+        - function: 'print_r()'
+          message: 'use some logger instead'
+        - function: 'putenv()'
+          message: 'might overwrite existing variables'
+    scanDirectories:
+      - ../polyfill/Shopware
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+    		- '#.*Shopware\\Commercial\\ReturnManagement\\Entity\\OrderReturn.*#'
+    		- identifier: class.notFound
+    		- identifier: generics.notCompatible
+    		- identifier: generics.notGeneric
+    		- identifier: generics.lessTypes
+    		- identifier: return.unresolvableType
+    		- identifier: property.unresolvableType
+    		- identifier: parameter.unresolvableType
+    		- identifier: varTag.unresolvableType
+    		- identifier: attribute.notFound
+
+services:
+    - class: MolliePayments\PHPStan\Rules\NoManufacturerRule
+      tags:
+        - phpstan.rules.rule
+
+includes:
+    - ../../../../vendor/spaze/phpstan-disallowed-calls/extension.neon

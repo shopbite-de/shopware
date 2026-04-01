@@ -1,0 +1,177 @@
+import Devices from "Services/utils/Devices";
+import Session from "Services/utils/Session"
+// ------------------------------------------------------
+import AdminLoginAction from "Actions/admin/AdminLoginAction";
+import Shopware from "Services/shopware/Shopware";
+import AdminPluginAction from "Actions/admin/AdminPluginAction";
+import VueJs from "Services/utils/VueJs/VueJs";
+
+
+const devices = new Devices();
+const session = new Session();
+
+const adminLogin = new AdminLoginAction();
+const pluginAction = new AdminPluginAction();
+
+const shopware = new Shopware();
+
+const device = devices.getFirstDevice();
+
+
+function beforeEach(device) {
+    cy.wrap(null).then(() => {
+        session.resetBrowserSession();
+        devices.setDevice(device);
+    });
+}
+
+context("Plugin Config", () => {
+
+    context(devices.getDescription(device), () => {
+
+        it('C147522: Onboarding Section is visible @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            cy.contains('Onboarding is easy with Mollie!');
+        })
+
+        it('C147523: Update Payment Method triggers action @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            cy.get('.sw-system-config--field-mollie-payments-config-mollie-plugin-config-section-payments > .sw-container > button').click();
+
+            cy.contains('The payment methods are successfully updated.');
+        })
+
+        it('C148986: Rounding Settings Information is visible @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            cy.contains('Shopware can use currency settings to calculate');
+        })
+
+        it('C4001: Smart Contact Form is responding properly @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            cy.get('.col-right > button.mollie-support-action', {timeout: 10000}).click();
+
+            // we have to see our modal popup
+            cy.contains('Request support from Mollie');
+
+            // the modal should show the Shopware version number
+            cy.contains("v" + shopware.getDisplayedVersion());
+
+            // the send button is disabled until data is filled in
+            cy.get('.sw-button-process').should('be.disabled');
+
+            // now fill in our data
+            cy.get('.input-name input').type('John');
+            cy.get('.input-email input').type('test@localhost.com');
+            cy.get('.input-subject input').type('Cypress Test Request');
+            cy.get('.input-message [contenteditable="true"]').type('This is an automated request by Cypress and should not be sent.');
+
+            // now click somewhere else
+            cy.get('.input-name input').click();
+
+            // the send button should be enabled now
+            cy.get('.sw-button-process').should('not.be.disabled');
+        })
+
+        it('C234008: Custom format for order number shows interactive preview @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            const inputPrefix = '[class*="mollie-payments-config-format-order-number"] input';
+
+            const divPreview = '.sw-system-config--field-mollie-payments-config-mollie-plugin-config-section-payments-format';
+
+            cy.get(inputPrefix).click().clear();
+            cy.get(divPreview).should('be.visible');
+
+            cy.get(inputPrefix).click().clear();
+            cy.get(inputPrefix).click().type('cypress_{ordernumber}', {parseSpecialCharSequences: false});
+            cy.get(divPreview).should('be.visible');
+            cy.contains(divPreview, '"cypress_1000"');
+
+            cy.get(inputPrefix).click().clear();
+            cy.get(inputPrefix).click().type('cypress_{ordernumber}-stage', {parseSpecialCharSequences: false});
+            cy.get(divPreview).should('be.visible');
+            cy.contains(divPreview, '"cypress_1000-stage"');
+        })
+
+        it('C1097313: Display order lifetime days warning @core', () => {
+
+            beforeEach(device);
+
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            const inputField = '[class*="mollie-payments-config-order-lifetime-days"] input'
+            const errorDiv = '.bankTransferDueDateLimitReached';
+            const klarnaWarningDiv = '.bankTransferDueDateKlarnaLimitReached';
+
+            cy.get(inputField).clear().type('101');
+            cy.get(klarnaWarningDiv).should('not.exist');
+            cy.get(errorDiv).should('exist');
+
+            pluginAction.savePlugConfiguration();
+            cy.get(klarnaWarningDiv).should('not.exist');
+            cy.get(errorDiv).should('exist');
+
+            cy.get(inputField).clear().type('30');
+            cy.get(klarnaWarningDiv).should('exist');
+            cy.get(errorDiv).should('not.exist');
+
+            pluginAction.savePlugConfiguration();
+            cy.get(klarnaWarningDiv).should('exist');
+            cy.get(errorDiv).should('not.exist');
+
+
+            cy.get(inputField).clear().type('0');
+            cy.get(klarnaWarningDiv).should('not.exist');
+            cy.get(errorDiv).should('not.exist');
+
+            pluginAction.savePlugConfiguration();
+            cy.get(klarnaWarningDiv).should('not.exist');
+            cy.get(errorDiv).should('not.exist');
+
+        })
+
+        it('C4255361: Wiki Button redirects to correct page @core', () => {
+
+            beforeEach(device);
+            
+            adminLogin.login();
+            pluginAction.openPluginConfiguration();
+
+            cy.get('.cy-documentation')
+                .should('be.visible')
+                .invoke('removeAttr', 'target')
+                .invoke('attr', 'href')
+                .then((expectedUrl) => {
+                    cy.get('.cy-documentation').click();
+
+                    cy.url().should('eq', expectedUrl);
+                });
+        })
+
+    })
+})

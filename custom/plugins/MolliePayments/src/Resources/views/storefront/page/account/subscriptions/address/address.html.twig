@@ -1,0 +1,73 @@
+{% block mollie_subscription_component_address %}
+    <div class="address">
+
+        {% block mollie_subscription_component_address_company %}
+            {% if address.company or address.vatId %}
+                <p>
+                    {% block mollie_subscription_component_address_company_name %}
+                        {% if address.company %}
+                            {{ address.company }}{% if address.department %} - {{ address.department }}{% endif %}
+                            <br/>
+                        {% endif %}
+                    {% endblock %}
+                </p>
+            {% endif %}
+        {% endblock %}
+
+        {% block mollie_subscription_component_address_information %}
+            <p>
+                {% block mollie_subscription_component_address_salutation %}
+                    {% if address.salutation and address.salutation.salutationKey != 'not_specified' %}
+                        {{ address.salutation.translated.displayName }}
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_title %}
+                    {% if address.title %}
+                        {{ address.title }}<br/>
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_name %}
+                    {{ address.firstName }} {{ address.lastName }}<br/>
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_street %}
+                    {{ address.street }}<br/>
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_additional_address_line_1 %}
+                    {% if address.additionalAddressLine1 %}
+                        {{ address.additionalAddressLine1 }}<br/>
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_additional_address_line_2 %}
+                    {% if address.additionalAddressLine2 %}
+                        {{ address.additionalAddressLine2 }}<br/>
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_phone_number %}
+                    {% if address.phoneNumber %}
+                        {{ address.phoneNumber }}<br/>
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_zipcode_city %}
+                    {{ address.zipcode }} {{ address.city }}<br/>
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_state %}
+                    {% if address.countryState %}
+                        {{ address.countryState.translated.name }}<br/>
+                    {% endif %}
+                {% endblock %}
+
+                {% block mollie_subscription_component_address_country %}
+                    {{ address.country.translated.name }}
+                {% endblock %}
+            </p>
+        {% endblock %}
+    </div>
+{% endblock %}

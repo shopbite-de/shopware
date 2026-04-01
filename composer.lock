@@ -4,8 +4,80 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fedf745494ef069409198cd12895a30",
+    "content-hash": "11bf060870bfc5a05be2b736237f44e6",
     "packages": [
+        {
+            "name": "async-aws/core",
+            "version": "1.28.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/async-aws/core.git",
+                "reference": "e8b02ac30b17afaf1352cbd352dceb789d792d39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/async-aws/core/zipball/e8b02ac30b17afaf1352cbd352dceb789d792d39",
+                "reference": "e8b02ac30b17afaf1352cbd352dceb789d792d39",
+                "shasum": ""
+            },
+            "require": {
+                "ext-hash": "*",
+                "ext-simplexml": "*",
+                "php": "^8.2",
+                "psr/cache": "^1.0 || ^2.0 || ^3.0",
+                "psr/log": "^1.0 || ^2.0 || ^3.0",
+                "symfony/deprecation-contracts": "^2.1 || ^3.0",
+                "symfony/http-client": "^4.4.16 || ^5.1.7 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/http-client-contracts": "^1.1.8 || ^2.0 || ^3.0",
+                "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
+            },
+            "conflict": {
+                "async-aws/s3": "<1.1",
+                "symfony/http-client": "5.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.5.42",
+                "symfony/error-handler": "^7.3.2 || ^8.0",
+                "symfony/phpunit-bridge": "^7.3.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.28-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AsyncAws\\Core\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Core package to integrate with AWS. This is a lightweight AWS SDK provider by AsyncAws.",
+            "keywords": [
+                "amazon",
+                "async-aws",
+                "aws",
+                "sdk",
+                "sts"
+            ],
+            "support": {
+                "source": "https://github.com/async-aws/core/tree/1.28.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/jderusse",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nyholm",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-16T10:24:54+00:00"
+        },
         {
             "name": "azjezz/psl",
             "version": "4.3.0",
@@ -1631,6 +1703,117 @@
             "time": "2025-03-06T22:45:56+00:00"
         },
         {
+            "name": "ezimuel/guzzlestreams",
+            "version": "4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezimuel/guzzlestreams.git",
+                "reference": "903161be81e9f497cc42fb7db982404a4e6441b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezimuel/guzzlestreams/zipball/903161be81e9f497cc42fb7db982404a4e6441b0",
+                "reference": "903161be81e9f497cc42fb7db982404a4e6441b0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "~9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Fork of guzzle/streams (abandoned) to be used with elasticsearch-php",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "stream"
+            ],
+            "support": {
+                "source": "https://github.com/ezimuel/guzzlestreams/tree/4.1.0"
+            },
+            "time": "2025-08-05T06:44:46+00:00"
+        },
+        {
+            "name": "ezimuel/ringphp",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezimuel/ringphp.git",
+                "reference": "b97f46088940671100012482577eeb59f26a13b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezimuel/ringphp/zipball/b97f46088940671100012482577eeb59f26a13b5",
+                "reference": "b97f46088940671100012482577eeb59f26a13b5",
+                "shasum": ""
+            },
+            "require": {
+                "ezimuel/guzzlestreams": "^3.0.1 || ^4.0.0",
+                "php": ">=5.4.0",
+                "react/promise": "^2.0 || ^3.0"
+            },
+            "replace": {
+                "guzzlehttp/ringphp": "self.version"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~9.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Ring\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
+            "support": {
+                "source": "https://github.com/ezimuel/ringphp/tree/1.4.1"
+            },
+            "time": "2026-02-11T16:42:15+00:00"
+        },
+        {
             "name": "ezyang/htmlpurifier",
             "version": "v4.19.0",
             "source": {
@@ -2584,6 +2767,101 @@
                 "source": "https://github.com/jsonrainbow/json-schema/tree/v6.7.2"
             },
             "time": "2026-02-15T15:06:22+00:00"
+        },
+        {
+            "name": "kiener/mollie-payments-plugin",
+            "version": "v4.23.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/plugins/MolliePayments",
+                "reference": "399374e98dfbb23bb17612801e931caf424aeaa5"
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=8.0",
+                "shopware/administration": "6.4.5.0 - 6.8.0.0",
+                "shopware/core": "6.4.5.0 - 6.8.0.0",
+                "shopware/elasticsearch": "6.4.5.0 - 6.8.0.0",
+                "shopware/storefront": "6.4.5.0 - 6.8.0.0"
+            },
+            "require-dev": {
+                "behat/behat": "3.15.0",
+                "behat/gherkin": "4.10.0",
+                "boxblinkracer/phpunuhi": "dev-main",
+                "friendsofphp/php-cs-fixer": "^3",
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^2",
+                "phpunit/phpunit": "^9",
+                "spaze/phpstan-disallowed-calls": "^4",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "suggest": {
+                "shopware/administration": "Require '*'. Enables features like partial shipping and refunding.",
+                "shopware/storefront": "Require '*'. Enables features like Creditcard Components and iDeal issuer selector."
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "Kiener\\MolliePayments\\MolliePayments",
+                "copyright": "(c) by Mollie B.V.",
+                "label": {
+                    "de-DE": "Mollie Zahlungen",
+                    "en-GB": "Mollie Payments",
+                    "nl-NL": "Mollie Betalingen"
+                },
+                "description": {
+                    "de-DE": "Mit Mollie integrieren Sie alle wichtigen internationalen und lokalen Zahlungsmethoden in nur einem Schritt in Ihren Shopware-Webshop. Starten Sie noch heute!",
+                    "en-GB": "With Mollie you integrate every major global and local payment method in your Shopware webshop in one go. Start growing your business with effortless payments today!",
+                    "nl-NL": "Met Mollie integreer je alle belangrijke internationale en lokale betaalmethoden in één keer in je Shopware webshop. Start vandaag nog!"
+                },
+                "manufacturerLink": {
+                    "de-DE": "https://store.shopware.com/mollie.html",
+                    "en-GB": "https://store.shopware.com/mollie.html",
+                    "nl-NL": "https://store.shopware.com/mollie.html"
+                },
+                "supportLink": {
+                    "de-DE": "https://www.mollie.com/contact",
+                    "en-GB": "https://www.mollie.com/contact",
+                    "nl-NL": "https://www.mollie.com/contact"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mollie\\Shopware\\": "shopware/",
+                    "Kiener\\MolliePayments\\": "src/",
+                    "Mollie\\Api\\": "vendor_manual/mollie-api-php/src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Mollie\\Unit\\": "tests/Unit/",
+                    "Mollie\\Integration\\": "tests/Integration/",
+                    "Mollie\\Behat\\": "tests/Behat/Context/",
+                    "MolliePayments\\Tests\\": "tests/PHPUnit/",
+                    "MolliePayments\\PHPStan\\": "tests/PHPStan/",
+                    "MolliePayments\\Fixtures\\": "tests/Fixtures/"
+                }
+            },
+            "scripts": {
+                "post-install-cmd": [
+                    "[ ! -f vendor/bin/phpcs ] || vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
+                ],
+                "post-update-cmd": [
+                    "[ ! -f vendor/bin/phpcs ] || vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mollie B.V."
+                }
+            ],
+            "description": "Mollie Payments",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "laminas/laminas-code",
@@ -3732,6 +4010,74 @@
                 }
             ],
             "time": "2024-09-09T07:06:30+00:00"
+        },
+        {
+            "name": "opensearch-project/opensearch-php",
+            "version": "2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opensearch-project/opensearch-php.git",
+                "reference": "1866e6ee95c15036038d6c95a5c54c6fe648de36"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opensearch-project/opensearch-php/zipball/1866e6ee95c15036038d6c95a5c54c6fe648de36",
+                "reference": "1866e6ee95c15036038d6c95a5c54c6fe648de36",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": ">=1.3.7",
+                "ezimuel/ringphp": "^1.2.2",
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1|^2|^3",
+                "symfony/yaml": "*"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^3.0",
+                "ext-zip": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^1.7.15",
+                "phpstan/phpstan-mockery": "^1.1.0",
+                "phpunit/phpunit": "^9.3",
+                "symfony/finder": "~4.0 || ~5.0"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Required (^3.0.0) in order to use the SigV4 handler",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenSearch\\": "src/OpenSearch/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Elastic"
+                },
+                {
+                    "name": "OpenSearch Contributors"
+                }
+            ],
+            "description": "PHP Client for OpenSearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "opensearch",
+                "search"
+            ],
+            "support": {
+                "issues": "https://github.com/opensearch-project/opensearch-php/issues",
+                "source": "https://github.com/opensearch-project/opensearch-php/tree/2.3.1"
+            },
+            "time": "2024-08-27T10:13:25+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -5981,6 +6327,62 @@
             "time": "2025-02-18T12:07:13+00:00"
         },
         {
+            "name": "shopware/elasticsearch",
+            "version": "v6.7.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shopware/elasticsearch.git",
+                "reference": "661b6bfaa4dd81c09f30d08189c8ddf1cc708ba5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shopware/elasticsearch/zipball/661b6bfaa4dd81c09f30d08189c8ddf1cc708ba5",
+                "reference": "661b6bfaa4dd81c09f30d08189c8ddf1cc708ba5",
+                "shasum": ""
+            },
+            "require": {
+                "async-aws/core": "^1.22",
+                "doctrine/dbal": "~4.4.0",
+                "ext-curl": "*",
+                "monolog/monolog": "^3.3.1",
+                "opensearch-project/opensearch-php": "^2.3.1",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "shopware/core": "v6.7.8.2",
+                "shyim/opensearch-php-dsl": "^1.0.5",
+                "symfony/http-foundation": "~7.4.0",
+                "symfony/messenger": "~7.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.5.19"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-trunk": "6.7.x-dev",
+                    "dev-master": "6.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Shopware\\Elasticsearch\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Elasticsearch for Shopware",
+            "support": {
+                "chat": "https://chat.shopware.com/",
+                "docs": "https://developer.shopware.com",
+                "forum": "https://forum.shopware.com",
+                "issues": "https://github.com/shopware/shopware/issues/",
+                "source": "https://github.com/shopware/elasticsearch/tree/v6.7.8.2",
+                "wiki": "https://developer.shopware.com"
+            },
+            "time": "2026-03-18T14:31:48+00:00"
+        },
+        {
             "name": "shopware/paypal-sdk",
             "version": "v1.6.3",
             "source": {
@@ -6123,6 +6525,61 @@
             "time": "2026-03-18T14:33:19+00:00"
         },
         {
+            "name": "shyim/opensearch-php-dsl",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shyim/opensearch-php-dsl.git",
+                "reference": "0658c01e13315d89b50a75b7810e8fa0cafe9651"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shyim/opensearch-php-dsl/zipball/0658c01e13315d89b50a75b7810e8fa0cafe9651",
+                "reference": "0658c01e13315d89b50a75b7810e8fa0cafe9651",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "*",
+                "infection/infection": "*",
+                "phpstan/phpstan": "*",
+                "phpunit/phpunit": "^9.5.8"
+            },
+            "suggest": {
+                "elasticsearch/elasticsearch": "Client library querying with the actual server",
+                "opensearch-project/opensearch-php": "Client library querying with the actual server"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenSearchDSL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Soner Sayakci",
+                    "homepage": "https://github.com/shyim"
+                },
+                {
+                    "name": "ONGR team",
+                    "homepage": "http://www.ongr.io"
+                }
+            ],
+            "description": "OpenSearch/Elasticsearch DSL library",
+            "homepage": "https://github.com/shyim/opensearch-dsl",
+            "support": {
+                "issues": "https://github.com/shyim/opensearch-php-dsl/issues",
+                "source": "https://github.com/shyim/opensearch-php-dsl/tree/1.1.4"
+            },
+            "time": "2026-03-11T18:10:12+00:00"
+        },
+        {
             "name": "smalot/pdfparser",
             "version": "v2.12.4",
             "source": {
@@ -6235,15 +6692,15 @@
         },
         {
             "name": "swag/paypal",
-            "version": "10.5.0",
+            "version": "10.6.0",
             "dist": {
                 "type": "path",
                 "url": "custom/plugins/SwagPayPal",
-                "reference": "1267c5d80000c4a3724d62f7e8693e27d62377b0"
+                "reference": "987b57e3b7108afe74568b38614f2f872995eaed"
             },
             "require": {
                 "shopware/core": "~6.7.0@dev",
-                "shopware/paypal-sdk": "^1.6.2"
+                "shopware/paypal-sdk": "^1.6.3"
             },
             "suggest": {
                 "shopware/administration": "Require '*'. Allows you to to set up the plugin easily",
@@ -6316,7 +6773,7 @@
                     "@lint:storefront:ci --fix"
                 ],
                 "lint:storefront:ci": [
-                    "cd src/Resources/app/storefront && ../../../../../../../src/Storefront/Resources/app/storefront/node_modules/.bin/eslint --config ../../../../../../../src/Storefront/Resources/app/storefront/.eslintrc.js ./src",
+                    "cd src/Resources/app/storefront && if [ -f ../../../../../../../src/Storefront/Resources/app/storefront/eslint.config.js ]; then ../../../../../../../src/Storefront/Resources/app/storefront/node_modules/.bin/eslint --config ../../../../../../../src/Storefront/Resources/app/storefront/eslint.config.js ./src; else ../../../../../../../src/Storefront/Resources/app/storefront/node_modules/.bin/eslint --config ../../../../../../../src/Storefront/Resources/app/storefront/.eslintrc.js ./src; fi",
                     "cd src/Resources/app/storefront && ../../../../../../../src/Storefront/Resources/app/storefront/node_modules/.bin/stylelint --config ../../../../../../../src/Storefront/Resources/app/storefront/stylelint.config.js ./src/scss"
                 ],
                 "phpunit": [
