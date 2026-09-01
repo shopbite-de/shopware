@@ -183,6 +183,9 @@
             "ref": "7c4b09065438b4fbe2baaf7838347090efffafac"
         }
     },
+    "symfony/mcp-bundle": {
+        "version": "v0.11.0"
+    },
     "symfony/messenger": {
         "version": "7.3",
         "recipe": {
@@ -250,6 +253,24 @@
             "branch": "main",
             "version": "5.4",
             "ref": "99277800a8f532fc369df7148804ed3d257c69c0"
+        }
+    },
+    "symfony/uid": {
+        "version": "7.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "7.0",
+            "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
+        }
+    },
+    "symfony/ux-twig-component": {
+        "version": "2.35",
+        "recipe": {
+            "repo": "github.com/shopware/recipes",
+            "branch": "main",
+            "version": "2.13",
+            "ref": "52a1848fd64f44ea41b1cdf80cb5a573cc1632b3"
         }
     },
     "symfony/validator": {
