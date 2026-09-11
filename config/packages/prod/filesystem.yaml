@@ -1,0 +1,41 @@
+# Production file storage: all runtime files live in an S3-compatible bucket (MinIO), so the
+# containers stay stateless and need no volumes. Configure via S3_* environment variables.
+#
+# Bucket layout:  media/ thumbnail/ theme/ sitemap/  (anonymous read)   private/ (invoices etc., no anonymous access)
+# `asset` (public/bundles, built into the image) deliberately stays local: it would otherwise
+# inherit the S3 config from `public` (see https://developer.shopware.com/docs/guides/hosting/infrastructure/filesystem.html).
+parameters:
+    env(S3_REGION): 'us-east-1'
+
+shopware:
+    filesystem:
+        public: &s3
+            type: amazon-s3
+            url: '%env(string:S3_PUBLIC_URL)%'
+            config:
+                bucket: '%env(string:S3_BUCKET)%'
+                region: '%env(string:S3_REGION)%'
+                endpoint: '%env(string:S3_ENDPOINT)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(string:S3_ACCESS_KEY)%'
+                    secret: '%env(string:S3_SECRET_KEY)%'
+        theme: *s3
+        sitemap: *s3
+        private:
+            type: amazon-s3
+            visibility: private
+            config:
+                bucket: '%env(string:S3_BUCKET)%'
+                region: '%env(string:S3_REGION)%'
+                endpoint: '%env(string:S3_ENDPOINT)%'
+                use_path_style_endpoint: true
+                root: private
+                credentials:
+                    key: '%env(string:S3_ACCESS_KEY)%'
+                    secret: '%env(string:S3_SECRET_KEY)%'
+        asset:
+            type: local
+            url: '%env(string:APP_URL)%'
+            config:
+                root: '%kernel.project_dir%/public'

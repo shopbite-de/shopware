@@ -53,7 +53,17 @@ make prod-console cmd="cache:clear"
 
 Dokploy uses `compose.dokploy.yaml` (Compose type, full stack incl. MariaDB + Valkey, variables from `docker/dokploy.env.example`); the `init` service runs the Deployment Helper on every deploy.
 
-Key files: `docker/Dockerfile`, `.dockerignore`, `.shopware-project.yml`, `compose.prod.yaml`, `compose.dokploy.yaml`, `config/packages/prod/shopware.yaml` (Redis wiring), `config/packages/prod/monolog.yaml` (stderr JSON logs). Production config under `config/packages/prod/` requires a Redis/Valkey instance via `REDIS_URL`.
+### Dokploy (live)
+
+Production runs on Dokploy (https://panel.shopbite.de, project "ShopBite", Compose service "shopware", compose path `./compose.dokploy.yaml`, auto-deploy on push to `main`). Public URL https://shopware.shopbite.de (service `web`, port 8000, TLS by Traefik). Every deploy rebuilds the image, runs `init` (Deployment Helper: migrations, plugin install/update, theme compile) and then recreates `web`, `worker`, `scheduler`. Environment variables are set in the Dokploy UI (template: `docker/dokploy.env.example`). The Dokploy API key and the Shopware integration credentials for this shop are in the workspace root `.env.local` (`DOKPLOY_API_KEY`, `SHOPWARE_ADMIN_KEY`, `SHOPWARE_ADMIN_SECRET`).
+
+Gotchas learned the hard way: the FrankenPHP base image inherits a Caddy healthcheck, so non-web services disable it; the base Caddyfile sends no `Cache-Control` for static files, hence `docker/Caddyfile`; Dokploy attaches only the domain service to `dokploy-network`; UI env vars are only available through `${VAR}` interpolation; `shopware-cli project ci` is the deploy build (there is no `project prod`).
+
+Key files: `docker/Dockerfile`, `docker/Caddyfile`, `.dockerignore`, `.shopware-project.yml`, `compose.prod.yaml`, `compose.dokploy.yaml`, `config/packages/prod/shopware.yaml` (Redis wiring), `config/packages/prod/monolog.yaml` (stderr JSON logs). Production config under `config/packages/prod/` requires a Redis/Valkey instance via `REDIS_URL` and an S3 bucket via `S3_*` (media, thumbnails, theme, sitemap, private files; bundles stay in the image).
+
+## Demo Data
+
+`scripts/seed-demo-menu.py <integration-key> <integration-secret> [--dry]` seeds the "Demo" sales channel with the La Fattoria menu (`scripts/lafattoria.json`): 9 categories under "Speisekarte", 71 products, property groups, cross-sellings. It is idempotent (IDs derived from menu numbers) and follows the storefront data model documented in `storefront/CLAUDE.md` ("Product data model").
 
 ## Plugin Architecture
 

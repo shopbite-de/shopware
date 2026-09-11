@@ -8,7 +8,7 @@
 # project network. Only `web` is additionally attached to `dokploy-network`
 # so Traefik (Dokploy Domains tab, service `web`, port 8000) can reach it.
 #
-# Every deploy: build image -> init-perm -> init (Deployment Helper: migrations,
+# Every deploy: build image -> init (Deployment Helper: migrations,
 # plugin install/update, theme compile) -> web / worker / scheduler are recreated.
 
 x-shopware: &shopware
@@ -33,6 +33,13 @@ x-shopware: &shopware
     DATABASE_URL: mysql://${DB_USER:-shopware}:${DB_PASSWORD:?DB_PASSWORD is required}@database:3306/${DB_NAME:-shopware}
     REDIS_URL: ${REDIS_URL:-redis://valkey:6379}
     MAILER_DSN: ${MAILER_DSN:-null://null}
+    # S3-compatible storage for media, thumbnails, theme, sitemap and private files (config/packages/prod/filesystem.yaml)
+    S3_ENDPOINT: ${S3_ENDPOINT:?S3_ENDPOINT is required (e.g. https://minio.example.com)}
+    S3_BUCKET: ${S3_BUCKET:?S3_BUCKET is required}
+    S3_REGION: ${S3_REGION:-us-east-1}
+    S3_ACCESS_KEY: ${S3_ACCESS_KEY:?S3_ACCESS_KEY is required}
+    S3_SECRET_KEY: ${S3_SECRET_KEY:?S3_SECRET_KEY is required}
+    S3_PUBLIC_URL: ${S3_PUBLIC_URL:?S3_PUBLIC_URL is required (public base URL of the bucket)}
     # Shopware Services (Copilot, AI tools, Nexus) are off for the headless shop; set 1 to enable
     ENABLE_SERVICES: ${ENABLE_SERVICES:-0}
     TRUSTED_PROXIES: ${TRUSTED_PROXIES:-private_ranges}
@@ -41,12 +48,6 @@ x-shopware: &shopware
     PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT:-512m}
     PHP_MAX_UPLOAD_SIZE: ${PHP_MAX_UPLOAD_SIZE:-128m}
     PHP_MAX_EXECUTION_TIME: ${PHP_MAX_EXECUTION_TIME:-300}
-  volumes:
-    - files:/var/www/html/files
-    - theme:/var/www/html/public/theme
-    - media:/var/www/html/public/media
-    - thumbnail:/var/www/html/public/thumbnail
-    - sitemap:/var/www/html/public/sitemap
 
 services:
   database:
@@ -107,22 +108,6 @@ services:
       timeout: 3s
       retries: 5
 
-  # Named volumes are created root-owned; the app runs as www-data (82).
-  init-perm:
-    <<: *shopware
-    restart: "no"
-    healthcheck:
-      disable: true
-    user: root
-    entrypoint:
-      - chown
-      - "82:82"
-      - /var/www/html/files
-      - /var/www/html/public/theme
-      - /var/www/html/public/media
-      - /var/www/html/public/thumbnail
-      - /var/www/html/public/sitemap
-
   # Deployment Helper: fresh install (system:install + admin user + sales channel)
   # or update (migrations, plugin install/update, theme compile). Runs on every `up`.
   init:
@@ -145,8 +130,6 @@ services:
         condition: service_healthy
       valkey:
         condition: service_healthy
-      init-perm:
-        condition: service_completed_successfully
 
   web:
     <<: *shopware
@@ -196,8 +179,3 @@ networks:
 volumes:
   db-data:
   valkey-data:
-  files:
-  theme:
-  media:
-  thumbnail:
-  sitemap:

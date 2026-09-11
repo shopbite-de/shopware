@@ -17,6 +17,7 @@ and the `shopware/docker` 0.3 Flex recipe.
 | `docker/dokploy.env.example` | Variables to paste into the Dokploy "Environment" tab |
 | `docker/prod.env.example` | Template for `docker/prod.env` (git-ignored): URL, secrets, DB password, admin user |
 | `config/packages/prod/shopware.yaml` | Redis for cache, sessions, carts, number ranges, locks and delayed invalidation |
+| `config/packages/prod/filesystem.yaml` | S3/MinIO for media, thumbnails, theme, sitemap and private files; `asset` (bundles) stays in the image |
 | `config/packages/prod/monolog.yaml` | JSON logs to stderr, level via `MONOLOG_LOG_LEVEL` |
 
 ## First deployment
@@ -67,10 +68,34 @@ SHOPWARE_PACKAGES_TOKEN=... docker build --secret id=packages_token,env=SHOPWARE
 `make prod-build` adds them automatically when `auth.json` exists or
 `SHOPWARE_PACKAGES_TOKEN` is set (also via `docker/prod.env`).
 
+## File storage (S3 / MinIO)
+
+All runtime files go to one S3-compatible bucket, configured through `S3_ENDPOINT`, `S3_BUCKET`,
+`S3_REGION`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` and `S3_PUBLIC_URL` (path-style public base URL,
+`endpoint/bucket`). The containers therefore need no file volumes and can be replaced freely.
+
+Bucket layout and required policy (set with `mc anonymous set download <alias>/<bucket>/<prefix>`):
+
+| Prefix | Filesystem | Access |
+| --- | --- | --- |
+| `media/`, `thumbnail/` | `public` | anonymous read |
+| `theme/` | `theme` | anonymous read |
+| `sitemap/` | `sitemap` | anonymous read |
+| `private/` | `private` (invoices, imports) | credentials only |
+
+`public/bundles` (the `asset` filesystem) is pinned to local storage on purpose: it is built into the
+image, served by Caddy with immutable cache headers, and would otherwise silently inherit the S3
+config from `public`. Use a bucket-scoped MinIO user (policy limited to the bucket), not the root key.
+Media URLs returned by the Store API point at `S3_PUBLIC_URL`, so the storefront loads images from
+MinIO directly.
+
+Live setup: MinIO on the Strato server (`https://veliu-minio.cjcbee.easypanel.host`, bucket
+`shopbite-demo-shopware`, user `shopware-app`), also registered as a Dokploy destination.
+
 ## Runtime layout
 
 - Shopware runs as `www-data` (uid 82) under FrankenPHP/Caddy on port 8000. Terminate TLS in a reverse proxy and keep `TRUSTED_PROXIES=private_ranges` so `APP_URL`/`https` are detected correctly.
-- State lives in named volumes: `db-data`, `valkey-data`, `files`, `media`, `thumbnail`, `theme`, `sitemap`. For multi-host setups move media/files to S3 via `shopware.filesystem` and drop the volumes.
+- State lives in MariaDB (`db-data`), Valkey (`valkey-data`) and the S3 bucket. The Shopware containers themselves are stateless.
 - Valkey uses `volatile-lru`: only keys with a TTL (cache, sessions, locks) are evicted; carts and number ranges are safe. RDB + AOF persistence keeps sessions and carts across restarts. For very large shops split it into an ephemeral (cache) and a persistent (cart/session) instance as recommended in the Shopware Redis guide.
 - The message queue stays on Doctrine (`MESSENGER_TRANSPORT_DSN` default). Scale consumers with `WORKER_REPLICAS`.
 - Logs go to stderr as JSON: `make prod-logs`.
@@ -94,14 +119,26 @@ Setup:
 3. Domains tab: add the shop domain, service `web`, container port `8000`, HTTPS on. Dokploy adds the
    Traefik labels itself; `TRUSTED_PROXIES=private_ranges` makes Shopware trust the forwarded `https`.
 4. Deploy. Watch the `init` container log for the Deployment Helper output.
-5. Enable Dokploy Volume Backups for `db-data` and the file volumes (`files`, `media`, `thumbnail`,
-   `theme`, `sitemap`). `valkey-data` only holds sessions and carts.
+5. Enable a Dokploy database backup for `db-data`. Files are in MinIO; `valkey-data` only holds sessions and carts.
 
 Networking: MariaDB and Valkey stay on the private project network and are not reachable from other
 Dokploy services. `web` is on both the project network and `dokploy-network` (Traefik). Dokploy would
 add `dokploy-network` to the domain service anyway; listing it explicitly keeps the project network too.
 
 Downtime per deploy is the container recreation of `web` (a few seconds) after `init` has finished.
+
+## Lessons learned (verified 2026-09-11)
+
+- `shopware-cli project ci` is the only deploy build command; there is no `project prod`. It runs composer (no dev), builds missing extension assets, `assets:install`, strips `node_modules` and sources, merges admin snippets and writes `sbom.cdx.json`.
+- The FrankenPHP base image carries `HEALTHCHECK curl localhost:2019/metrics`. Services without Caddy (`init`, `worker`, `scheduler`) must set `healthcheck: disable: true` or they report unhealthy and `--wait` fails.
+- The base Caddyfile serves `/media`, `/thumbnail`, `/bundles`, `/theme` without `Cache-Control`. `docker/Caddyfile` adds one year `immutable` for existing files only, so a missing thumbnail is never cached as 404.
+- `--mount=type=secret,...,env=` needs `# syntax=docker/dockerfile:1` (the 1.4 frontend from the recipe does not know `env=`). Missing secrets are fine, the mounts are optional.
+- A one-shot compose service (`restart: "no"`) is started again on every `docker compose up -d`, even without changes. That is what makes the Deployment Helper run on every deploy.
+- Symfony 7.4 accepts `TRUSTED_PROXIES=private_ranges`; hard-coding the Traefik IP breaks when Traefik restarts.
+- Doctrine's DSN parser tolerates `% @ &` in the password only by luck. Use hex passwords (`openssl rand -hex 24`).
+- Dokploy: `docker compose -p <app> --env-file .env -f <file> up -d --build --remove-orphans`; only the service with a domain is attached to `dokploy-network`; UI variables are not injected into containers unless referenced with `${VAR}` or via `env_file`.
+- Shopware Services (Copilot, AI tools, Nexus) try to register on boot and need a public `APP_URL`; `ENABLE_SERVICES=0` keeps them off.
+- The MariaDB image healthcheck `healthcheck.sh --connect --innodb_initialized` needs no credentials.
 
 ## Useful commands
 
