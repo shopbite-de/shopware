@@ -25,3 +25,10 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    # Adds Cache-Control metadata to every object written to S3 (see src/Filesystem)
+    App\Filesystem\CacheControlAwsS3Factory:
+        decorates: 'Shopware\Core\Framework\Adapter\Filesystem\FilesystemFactory.amazon_s3'
+        arguments:
+            - '@.inner'
+            - '%shopware.filesystem.batch_write_size%'

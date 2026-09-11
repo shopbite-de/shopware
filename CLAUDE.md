@@ -59,6 +59,8 @@ Production runs on Dokploy (https://panel.shopbite.de, project "ShopBite", Compo
 
 Gotchas learned the hard way: the FrankenPHP base image inherits a Caddy healthcheck, so non-web services disable it; the base Caddyfile sends no `Cache-Control` for static files, hence `docker/Caddyfile`; Dokploy attaches only the domain service to `dokploy-network`; UI env vars are only available through `${VAR}` interpolation; `shopware-cli project ci` is the deploy build (there is no `project prod`).
 
+`src/Filesystem/` holds the only project PHP code: a decorator that adds `Cache-Control` metadata to S3 uploads (`config.options.cache_control`).
+
 Key files: `docker/Dockerfile`, `docker/Caddyfile`, `.dockerignore`, `.shopware-project.yml`, `compose.prod.yaml`, `compose.dokploy.yaml`, `config/packages/prod/shopware.yaml` (Redis wiring), `config/packages/prod/monolog.yaml` (stderr JSON logs). Production config under `config/packages/prod/` requires a Redis/Valkey instance via `REDIS_URL` and an S3 bucket via `S3_*` (media, thumbnails, theme, sitemap, private files; bundles stay in the image).
 
 ## Demo Data

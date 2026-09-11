@@ -89,6 +89,14 @@ config from `public`. Use a bucket-scoped MinIO user (policy limited to the buck
 Media URLs returned by the Store API point at `S3_PUBLIC_URL`, so the storefront loads images from
 MinIO directly.
 
+**Cache-Control on objects:** MinIO has no bucket-wide default headers and Shopware only sets the
+content type on upload. `src/Filesystem/CacheControlAwsS3Factory` decorates Shopware's S3 factory
+and, when a filesystem has `config.options.cache_control`, writes that value as object metadata on
+every upload (regular writes, streamed uploads and the batch copy used for theme files). The prod
+config sets `public, max-age=31536000, immutable` for public/theme/sitemap. Objects written before
+that change need a one-off metadata rewrite, e.g.
+`mc cp -r --attr "Cache-Control=public, max-age=31536000, immutable" alias/bucket/media/ alias/bucket/media/`.
+
 Live setup: MinIO on the Strato server (`https://veliu-minio.cjcbee.easypanel.host`, bucket
 `shopbite-demo-shopware`, user `shopware-app`), also registered as a Dokploy destination.
 
