@@ -1,0 +1,179 @@
+# Production stack for the ShopBite Shopware 6 installation.
+#
+#   cp docker/prod.env.example docker/prod.env      # fill in secrets + URL
+#   make prod-build                                 # docker build --pull -f docker/Dockerfile
+#   make prod-up                                    # init (Deployment Helper) -> web, worker, scheduler
+#
+# Modeled on the official "Typical Setup":
+# https://developer.shopware.com/docs/guides/hosting/installation-updates/docker.html#typical-setup
+#
+# Put a TLS-terminating reverse proxy in front of HTTP_PORT. Media/files live in
+# named volumes; switch to S3 (shopware.filesystem) when you need more than one host.
+
+x-shopware: &shopware
+  image: ${IMAGE:-shopbite/shopware}:${TAG:-latest}
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+    args:
+      PHP_VERSION: ${PHP_VERSION:-8.4}
+  restart: unless-stopped
+  environment: &shopware-env
+    APP_ENV: prod
+    APP_URL: ${APP_URL:?APP_URL is required}
+    APP_SECRET: ${APP_SECRET:?APP_SECRET is required (openssl rand -hex 32)}
+    INSTANCE_ID: ${INSTANCE_ID:?INSTANCE_ID is required (openssl rand -hex 32)}
+    DATABASE_URL: mysql://${DB_USER:-shopware}:${DB_PASSWORD:?DB_PASSWORD is required}@database:3306/${DB_NAME:-shopware}
+    REDIS_URL: ${REDIS_URL:-redis://valkey:6379}
+    MAILER_DSN: ${MAILER_DSN:-null://null}
+    # Shopware Services (Copilot, AI tools, Nexus) are off for the headless shop; set 1 to enable
+    ENABLE_SERVICES: ${ENABLE_SERVICES:-0}
+    TRUSTED_PROXIES: ${TRUSTED_PROXIES:-private_ranges}
+    SHOPWARE_HTTP_DEFAULT_TTL: ${SHOPWARE_HTTP_DEFAULT_TTL:-7200}
+    MONOLOG_LOG_LEVEL: ${MONOLOG_LOG_LEVEL:-error}
+    PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT:-512m}
+    PHP_MAX_UPLOAD_SIZE: ${PHP_MAX_UPLOAD_SIZE:-128m}
+    PHP_MAX_EXECUTION_TIME: ${PHP_MAX_EXECUTION_TIME:-300}
+  volumes:
+    - files:/var/www/html/files
+    - theme:/var/www/html/public/theme
+    - media:/var/www/html/public/media
+    - thumbnail:/var/www/html/public/thumbnail
+    - sitemap:/var/www/html/public/sitemap
+
+services:
+  database:
+    image: mariadb:11.8
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-shopware}
+      MARIADB_USER: ${DB_USER:-shopware}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD is required}
+    command:
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --log_bin_trust_function_creators=1
+      - --default-time-zone=+00:00
+      - --group_concat_max_len=320000
+      - --innodb_buffer_pool_size=${DB_BUFFER_POOL_SIZE:-512M}
+      - --binlog_expire_logs_seconds=86400
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    # One instance for cache (ephemeral) and carts/sessions/locks (durable):
+    # volatile-lru only evicts keys with a TTL, so number ranges and carts are never dropped.
+    # Persistence (RDB + AOF) keeps sessions and carts across restarts.
+    command:
+      - valkey-server
+      - --maxmemory
+      - ${VALKEY_MAXMEMORY:-256mb}
+      - --maxmemory-policy
+      - volatile-lru
+      - --save
+      - "60 1"
+      - --appendonly
+      - "yes"
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Named volumes are created root-owned; the app runs as www-data (82).
+  init-perm:
+    <<: *shopware
+    restart: "no"
+    healthcheck:
+      disable: true
+    user: root
+    entrypoint:
+      - chown
+      - "82:82"
+      - /var/www/html/files
+      - /var/www/html/public/theme
+      - /var/www/html/public/media
+      - /var/www/html/public/thumbnail
+      - /var/www/html/public/sitemap
+
+  # Deployment Helper: fresh install (system:install + admin user + sales channel)
+  # or update (migrations, plugin install/update, theme compile). Runs on every `up`.
+  init:
+    <<: *shopware
+    restart: "no"
+    healthcheck:
+      disable: true
+    environment:
+      <<: *shopware-env
+      INSTALL_LOCALE: ${INSTALL_LOCALE:-de-DE}
+      INSTALL_CURRENCY: ${INSTALL_CURRENCY:-EUR}
+      INSTALL_ADMIN_USERNAME: ${INSTALL_ADMIN_USERNAME:-admin}
+      INSTALL_ADMIN_PASSWORD: ${INSTALL_ADMIN_PASSWORD:?INSTALL_ADMIN_PASSWORD is required}
+      INSTALL_ADMIN_EMAIL: ${INSTALL_ADMIN_EMAIL:-}
+      SALES_CHANNEL_URL: ${SALES_CHANNEL_URL:-${APP_URL}}
+    # assets:install already ran in the image build (shopware-cli project ci)
+    entrypoint: ["php", "vendor/bin/shopware-deployment-helper", "run", "--skip-assets-install"]
+    depends_on:
+      database:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      init-perm:
+        condition: service_completed_successfully
+
+  web:
+    <<: *shopware
+    ports:
+      - "${HTTP_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:8000/api/_info/health-check"]
+      start_period: 30s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+  # Message queue consumer (mails, indexing, thumbnails, ...). --time-limit makes it exit
+  # regularly; restart: unless-stopped brings it back with fresh memory.
+  worker:
+    <<: *shopware
+    # the base image's healthcheck probes Caddy, which does not run here
+    healthcheck:
+      disable: true
+    entrypoint: ["php", "bin/console", "messenger:consume", "async", "low_priority", "--time-limit=300", "--memory-limit=512M"]
+    deploy:
+      replicas: ${WORKER_REPLICAS:-1}
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+  # Runs scheduled tasks (cache invalidation, sitemap, cleanup, ...) in a loop
+  scheduler:
+    <<: *shopware
+    healthcheck:
+      disable: true
+    entrypoint: ["php", "bin/console", "scheduled-task:run"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+volumes:
+  db-data:
+  valkey-data:
+  files:
+  theme:
+  media:
+  thumbnail:
+  sitemap:

@@ -18,3 +18,9 @@
 /install.lock
 /public/asset-manifest.json
 ###< shopware/core ###
+
+###> shopbite/docker-prod ###
+/docker/prod.env
+/.shopware-project.local.yml
+/sbom.cdx.json
+###< shopbite/docker-prod ###

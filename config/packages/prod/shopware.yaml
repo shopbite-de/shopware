@@ -1,0 +1,62 @@
+# Production infrastructure configuration (only loaded when APP_ENV=prod).
+# Designed for compose.prod.yaml: a Redis/Valkey instance reachable via REDIS_URL.
+#
+# Database index layout on that instance:
+#   /0  PHP sessions            (durable)
+#   /1  object + HTTP cache     (ephemeral, may be evicted)
+#   /2  carts, number ranges, delayed cache invalidation (durable)
+#   /3  Symfony locks
+#
+# Docs: https://developer.shopware.com/docs/guides/hosting/infrastructure/redis.html
+#       https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html
+parameters:
+    env(REDIS_URL): 'redis://localhost:6379'
+
+shopware:
+    redis:
+        connections:
+            ephemeral:
+                dsn: '%env(string:REDIS_URL)%/1'
+            persistent:
+                dsn: '%env(string:REDIS_URL)%/2'
+
+    # Cart persistence in Redis instead of MySQL (atomic, fast, shared between web + workers)
+    cart:
+        storage:
+            type: redis
+            config:
+                connection: persistent
+
+    # Order/invoice number generation via atomic Redis increments
+    number_range:
+        increment_storage: redis
+        config:
+            connection: persistent
+
+    # Delayed HTTP-cache invalidation bookkeeping in Redis instead of MySQL (avoids deadlocks under load)
+    cache:
+        invalidation:
+            delay_options:
+                storage: redis
+                connection: ephemeral
+
+    # Extensions are managed from code by the Deployment Helper; hide install/uninstall in the Administration
+    deployment:
+        runtime_extension_management: false
+
+framework:
+    cache:
+        # Shared object + HTTP cache for all containers (web, worker, scheduler).
+        # `system` stays on the local filesystem on purpose (Symfony metadata caches are faster local).
+        app: cache.adapter.redis_tag_aware
+        default_redis_provider: '%env(string:REDIS_URL)%/1'
+
+    session:
+        handler_id: '%env(string:REDIS_URL)%/0'
+
+    # Remote lock store: the file-based default (LOCK_DSN=flock) is per container and breaks with worker/scheduler containers
+    lock: '%env(string:REDIS_URL)%/3'
+
+    # Symfony Secrets are not used in this project; skipping the vault saves CPU on every boot
+    secrets:
+        enabled: false

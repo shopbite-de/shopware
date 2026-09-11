@@ -1,0 +1,32 @@
+# Shopware CLI project configuration.
+# - `build`      is used by `shopware-cli project ci` inside docker/Dockerfile
+# - `deployment` is used by `vendor/bin/shopware-deployment-helper run` (the `init` service in compose.prod.yaml)
+# Docs: https://developer.shopware.com/docs/products/tools/cli/project-commands/build.html
+#       https://developer.shopware.com/docs/guides/hosting/installation-updates/deployments/deployment-helper/configuration.html
+
+compatibility_date: '2026-09-11'
+
+build:
+  # Keep compiled extension assets in the bundle directories (default) so a
+  # runtime `assets:install` (e.g. plugin update via Admin) still finds them.
+  keep_extension_source: false
+  keep_source_maps: false
+  remove_extension_assets: false
+
+deployment:
+  # All extensions are managed from code (Composer + custom/plugins).
+  # Deployment Helper installs, updates and activates them on every deploy.
+  extension-management:
+    enabled: true
+
+  # Smart cache clearing (only when needed) keeps deployments fast.
+  cache:
+    always_clear: false
+
+  # Storefront maintenance mode during system:update:finish. The Nuxt
+  # storefront talks to the Store API, which is not affected, so keep it off.
+  maintenance:
+    enabled: false
+
+  theme-compile:
+    parallel: false

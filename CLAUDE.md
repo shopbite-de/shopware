@@ -39,6 +39,22 @@ bin/console cache:clear
 bin/console system:install --basic-setup --create-database --drop-database --force
 ```
 
+## Production Build
+
+Production images follow the official Shopware Docker guide (FrankenPHP base image, `shopware-cli project ci`, Deployment Helper). Everything is documented in `docs/production-docker.md`.
+
+```bash
+cp docker/prod.env.example docker/prod.env   # once, fill in secrets
+make prod-build      # docker build --pull -f docker/Dockerfile
+make prod-up         # compose.prod.yaml: db, valkey, init (deployment helper), web, worker, scheduler
+make prod-deploy     # rebuild + roll out
+make prod-console cmd="cache:clear"
+```
+
+Dokploy uses `compose.dokploy.yaml` (Compose type, full stack incl. MariaDB + Valkey, variables from `docker/dokploy.env.example`); the `init` service runs the Deployment Helper on every deploy.
+
+Key files: `docker/Dockerfile`, `.dockerignore`, `.shopware-project.yml`, `compose.prod.yaml`, `compose.dokploy.yaml`, `config/packages/prod/shopware.yaml` (Redis wiring), `config/packages/prod/monolog.yaml` (stderr JSON logs). Production config under `config/packages/prod/` requires a Redis/Valkey instance via `REDIS_URL`.
+
 ## Plugin Architecture
 
 The `shopbite-de/shopware-plugin` (namespace `ShopBite\`) adds headless Store API endpoints and checkout enhancements for the ShopBite Nuxt storefront. Key areas:
