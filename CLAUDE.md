@@ -65,7 +65,7 @@ Key files: `docker/Dockerfile`, `docker/Caddyfile`, `.dockerignore`, `.shopware-
 
 ## Demo Data
 
-`scripts/seed-demo-menu.py <integration-key> <integration-secret> [--dry]` seeds the "Demo" sales channel with the La Fattoria menu (`scripts/lafattoria.json`): 9 categories under "Speisekarte", 71 products, property groups, cross-sellings. It is idempotent (IDs derived from menu numbers) and follows the storefront data model documented in `storefront/CLAUDE.md` ("Product data model").
+`scripts/seed-demo-menu.py <integration-key> <integration-secret> [--dry]` seeds the "Demo" sales channel with the La Fattoria menu (`scripts/lafattoria.json`): 9 categories under "Speisekarte", 71 products plus 66 variants (pizza sizes, side dish and doneness for meat), property groups (Hauptzutaten, Vegetarisch, Vegan, Größe, Beilage, Garstufe), "Extras" cross-sellings on pizzas and the footer navigation (root folder "Footer" set as `footerCategoryId`). It is idempotent (IDs derived from menu numbers) and follows the storefront data model documented in `storefront/CLAUDE.md` ("Product data model"). Data rules: side dishes are standalone products, never cross-selling extras; vegan products carry only the Vegan flag; no "Küche" property.
 
 ## Plugin Architecture
 

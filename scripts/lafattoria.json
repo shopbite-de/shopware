@@ -1,0 +1,954 @@
+{
+ "21": {
+  "nr": "21",
+  "name": "Pizza Margherita",
+  "desc": null,
+  "price": 7.0,
+  "cat": "/speisekarte"
+ },
+ "22": {
+  "nr": "22",
+  "name": "Pizza Salami",
+  "desc": "Salami",
+  "price": 8.0,
+  "cat": "/speisekarte"
+ },
+ "23": {
+  "nr": "23",
+  "name": "Pizza Procutto",
+  "desc": "Schinken",
+  "price": 8.0,
+  "cat": "/speisekarte"
+ },
+ "24": {
+  "nr": "24",
+  "name": "Pizza Funghi",
+  "desc": "Pilze",
+  "price": 8.0,
+  "cat": "/speisekarte"
+ },
+ "25": {
+  "nr": "25",
+  "name": "Pizza Peperoniwurst",
+  "desc": "Peperoniwurst",
+  "price": 8.0,
+  "cat": "/speisekarte"
+ },
+ "26": {
+  "nr": "26",
+  "name": "Pizza Mix",
+  "desc": "Pilze, Salami, Schinken",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "27": {
+  "nr": "27",
+  "name": "Pizza Romana",
+  "desc": "Salami, Schrimps, Zucchini, Zwiebeln",
+  "price": 9.0,
+  "cat": "/speisekarte"
+ },
+ "28": {
+  "nr": "28",
+  "name": "Pizza Spezial",
+  "desc": "Peperoni (mild), Peperoniwurst, Pilze, Salami",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "29": {
+  "nr": "29",
+  "name": "Pizza 4 Stagioni",
+  "desc": "Artischocken, Salami, Schinken, Zwiebeln",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "30": {
+  "nr": "30",
+  "name": "Pizza Calzone",
+  "desc": "Eine gefaltete und gefüllte Pizza",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "31": {
+  "nr": "31",
+  "name": "Pizza Tonno",
+  "desc": "Knoblauch, Tunfisch, Zwiebeln",
+  "price": 9.0,
+  "cat": "/speisekarte"
+ },
+ "32": {
+  "nr": "32",
+  "name": "Pizza Hawaii",
+  "desc": "Annanas, Schinken",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "33": {
+  "nr": "33",
+  "name": "Pizza Siziliane",
+  "desc": "Kapern, Knoblauch, Oliven, Sardellen",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "34": {
+  "nr": "34",
+  "name": "Pizza Mama Lucia",
+  "desc": "Artischocken, Peperoniwurst, Pilze, Salami, Schinken",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "35": {
+  "nr": "35",
+  "name": "Pizza Diavolo",
+  "desc": "Knoblauch, Peperoni (scharf), Peperoniwurst",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "36": {
+  "nr": "36",
+  "name": "Pizza Polizi",
+  "desc": "Ei, Paprika, Pilze, Schinken",
+  "price": 9.0,
+  "cat": "/speisekarte"
+ },
+ "37": {
+  "nr": "37",
+  "name": "Pizza Compagnola",
+  "desc": "Erbsen, Knoblauch, Peperoni (mild), Schinken",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "38": {
+  "nr": "38",
+  "name": "Pizza Vegetaria",
+  "desc": "Brokkoli, Pilze, Zucchini, Zwiebeln",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "39": {
+  "nr": "39",
+  "name": "Pizza Porcinci",
+  "desc": "Auberginen, Mozzarella, Steinpilze",
+  "price": 10.5,
+  "cat": "/speisekarte"
+ },
+ "40": {
+  "nr": "40",
+  "name": "Pizza Marinara",
+  "desc": "Meeresfrüchte",
+  "price": 10.0,
+  "cat": "/speisekarte"
+ },
+ "41": {
+  "nr": "41",
+  "name": "Pizza di Mari",
+  "desc": "Sardellen, Schrimps, Tunfisch",
+  "price": 10.0,
+  "cat": "/speisekarte"
+ },
+ "42": {
+  "nr": "42",
+  "name": "Pizza Bolognese",
+  "desc": "Statt Toamtensoße, mit Hackfleischsoße und Käse belegt",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "43": {
+  "nr": "43",
+  "name": "Pizza Spinaci",
+  "desc": "Spinat",
+  "price": 8.5,
+  "cat": "/speisekarte"
+ },
+ "44": {
+  "nr": "44",
+  "name": "Pizza Fuata",
+  "desc": "Auberginen, Oliven, Sardellen, Tomaten",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "45": {
+  "nr": "45",
+  "name": "Pizza Capriciosa",
+  "desc": "Artischocken, Mais, Paprika, Peperoniwurst",
+  "price": 9.0,
+  "cat": "/speisekarte"
+ },
+ "46": {
+  "nr": "46",
+  "name": "Pizza Quoattro Formaggi",
+  "desc": "4 Sorten Käse",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "47": {
+  "nr": "47",
+  "name": "Pizza Verdura",
+  "desc": "Auberginen, Brokkoli, Erbsen, Zucchini",
+  "price": 9.5,
+  "cat": "/speisekarte"
+ },
+ "48": {
+  "nr": "48",
+  "name": "Pizzabrot Knobi",
+  "desc": "Knoblauch, Olivenöl",
+  "price": 3.5,
+  "cat": "/speisekarte"
+ },
+ "49": {
+  "nr": "49",
+  "name": "Pizzabrot Tomate",
+  "desc": "Tomatensoße und Knoblauch",
+  "price": 4.0,
+  "cat": "/speisekarte"
+ },
+ "1": {
+  "nr": "1",
+  "name": "Scampi Cocktail",
+  "desc": "Krabbencocktail mit Toastbrot",
+  "price": 10.5,
+  "cat": "/c/Vorspeisen/"
+ },
+ "3": {
+  "nr": "3",
+  "name": "Mozarella Capresse",
+  "desc": "Balsamico, Basilikum, Mozzarella, Oliven, Olivenöl, Tomaten",
+  "price": 9.5,
+  "cat": "/c/Vorspeisen/"
+ },
+ "4": {
+  "nr": "4",
+  "name": "Gebackener Camembertkäse",
+  "desc": "mit Toastbrot",
+  "price": 6.5,
+  "cat": "/c/Vorspeisen/"
+ },
+ "5": {
+  "nr": "5",
+  "name": "Gebackener Schafskäse",
+  "desc": "mit Toastbrot",
+  "price": 7.5,
+  "cat": "/c/Vorspeisen/"
+ },
+ "6": {
+  "nr": "6",
+  "name": "Insalata di Mari",
+  "desc": null,
+  "price": 14.5,
+  "cat": "/c/Vorspeisen/"
+ },
+ "12": {
+  "nr": "12",
+  "name": "Insalata verde",
+  "desc": "Eisbergsalat, Zwiebeln",
+  "price": 5.0,
+  "cat": "/c/Salate/"
+ },
+ "13": {
+  "nr": "13",
+  "name": "Gemischter Salat",
+  "desc": "Eisbergsalat, Gurken, Tomaten, Zwiebeln",
+  "price": 6.5,
+  "cat": "/c/Salate/"
+ },
+ "14": {
+  "nr": "14",
+  "name": "Insalata di Pomodoro con Tonno",
+  "desc": "Tomaten, Tunfisch, Zwiebeln",
+  "price": 7.5,
+  "cat": "/c/Salate/"
+ },
+ "15": {
+  "nr": "15",
+  "name": "Insalata Italia",
+  "desc": "Ei, Eisbergsalat, Gurken, Käse, Oliven, Schinken, Tomaten, Tunfisch, Zwiebeln",
+  "price": 9.5,
+  "cat": "/c/Salate/"
+ },
+ "16": {
+  "nr": "16",
+  "name": "Insalata della casa",
+  "desc": "Ei, Eisbergsalat, Käse, Meeresfrüchte, Mozzarella, Schinken",
+  "price": 9.5,
+  "cat": "/c/Salate/"
+ },
+ "17": {
+  "nr": "17",
+  "name": "Bauernsalat",
+  "desc": "Eisbergsalat, Gurken, Käse, Mais, Schafskäse, Tomaten",
+  "price": 9.0,
+  "cat": "/c/Salate/"
+ },
+ "18": {
+  "nr": "18",
+  "name": "Insalata di Pollo",
+  "desc": "Eisbergsalat, Gurken, Hähnchenbrustfilet, Käse, Mais, Tomaten, Zwiebeln",
+  "price": 11.0,
+  "cat": "/c/Salate/"
+ },
+ "19": {
+  "nr": "19",
+  "name": "Insalata Mista",
+  "desc": "Ei, Eisbergsalat, Gurken, Mozzarella, Paprika",
+  "price": 8.5,
+  "cat": "/c/Salate/"
+ },
+ "20": {
+  "nr": "20",
+  "name": "Beilagensalat",
+  "desc": "Eisbergsalat, Gurken, Tomaten, Zwiebeln",
+  "price": 4.0,
+  "cat": "/c/Salate/"
+ },
+ "100": {
+  "nr": "100",
+  "name": "Penne al Fonro",
+  "desc": "Mit Vorderschinken, Pilzen und Erbsen in Sahne-Hackfleischsoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "101": {
+  "nr": "101",
+  "name": "Canneloni",
+  "desc": "Fleischgefüllte Teigrollen mit Käse überbacken",
+  "price": 11.0,
+  "cat": "/c/Nudeln/"
+ },
+ "102": {
+  "nr": "102",
+  "name": "Rigatoni Vegetario",
+  "desc": "Mit Broccoli, Zucchini und Tomaten in Sahnesoße, mit Käse überbacken",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "50": {
+  "nr": "50",
+  "name": "Spaghetti Napoli",
+  "desc": "Tomatensoße",
+  "price": 8.0,
+  "cat": "/c/Nudeln/"
+ },
+ "51": {
+  "nr": "51",
+  "name": "Spaghetti Bolognese",
+  "desc": "Hackfleischsoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "52": {
+  "nr": "52",
+  "name": "Spaghetti Carbonare",
+  "desc": "Vorderschinken und Ein in Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "53": {
+  "nr": "53",
+  "name": "Spaghetti alla Contadina",
+  "desc": "Nach Bauernart mit Erbsen und Vorderschinken in Tomaten – Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "54": {
+  "nr": "54",
+  "name": "Spaghetti aglio olio",
+  "desc": "Knoblauch, Öl und scharfe Peperoni",
+  "price": 8.5,
+  "cat": "/c/Nudeln/"
+ },
+ "55": {
+  "nr": "55",
+  "name": "Spaghetti al Pesto",
+  "desc": "Verschiedenen Kräutern in Sahnesoße",
+  "price": 8.5,
+  "cat": "/c/Nudeln/"
+ },
+ "56": {
+  "nr": "56",
+  "name": "Spaghetti Frutti di Mare",
+  "desc": "Meeresfrüchte und Knoblauch in Tomatensoße",
+  "price": 11.0,
+  "cat": "/c/Nudeln/"
+ },
+ "57": {
+  "nr": "57",
+  "name": "Spaghetti Mama Rosa",
+  "desc": "Vorderschinken, Pilzen und Erbsen in Hackfleisch – Sahnesoße",
+  "price": 10.5,
+  "cat": "/c/Nudeln/"
+ },
+ "58": {
+  "nr": "58",
+  "name": "Spaghetti Gorgonzola",
+  "desc": "Gorgonzolasoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "59": {
+  "nr": "59",
+  "name": "Spaghetti Tonno",
+  "desc": "Thunfisch in Tomatensoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "60": {
+  "nr": "60",
+  "name": "Rigatoni Bolognese",
+  "desc": "Hackfleischsoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "61": {
+  "nr": "61",
+  "name": "Rigatoni Panna",
+  "desc": "Vorderschinken in Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "62": {
+  "nr": "62",
+  "name": "Rigatoni alla chef",
+  "desc": "Vorderschinken und frischen Champignons in Hackfleischsoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "63": {
+  "nr": "63",
+  "name": "Rigatoni Quattro formaggi",
+  "desc": "4 Sorten Käse in Sahnesoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "64": {
+  "nr": "64",
+  "name": "Rigatoni alla calabrese",
+  "desc": "Zwiebeln, Pilzen und Mozzarella in Tomaten – Sahnesoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "65": {
+  "nr": "65",
+  "name": "Rigatoni Verdure",
+  "desc": "Broccoli, Erbsen in Tomaten – Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "66": {
+  "nr": "66",
+  "name": "Tortellini Bolognese",
+  "desc": "Hackfleischsoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "67": {
+  "nr": "67",
+  "name": "Tortellini a la Panna",
+  "desc": "Vorderschinken in Sahnesoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "68": {
+  "nr": "68",
+  "name": "Tortellini Gorgonzola",
+  "desc": "Gorgonzolasoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "69": {
+  "nr": "69",
+  "name": "Tortellini Calabrese",
+  "desc": "Vorderschinken, Erbsen in Tomaten – Sahnesoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "70": {
+  "nr": "70",
+  "name": "Tagliatelle Bolognese",
+  "desc": "Bandnudeln mit Bolognesesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "71": {
+  "nr": "71",
+  "name": "Tagliatelle ai spinaci",
+  "desc": "Bandnudeln mit Spinat in Tomaten- und Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "72": {
+  "nr": "72",
+  "name": "Tagliatelle e funghi fresce",
+  "desc": "Bandnudeln mit frischem Champignons in Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "73": {
+  "nr": "73",
+  "name": "Tagliatelle contadino",
+  "desc": "Bandnudeln mit Vorderschinken in Hackfleischsoße und Sahnesoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "74": {
+  "nr": "74",
+  "name": "Tagliatelle dela frederici",
+  "desc": "Bandnudeln mit Pfefferlingen in Sahnesoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "75": {
+  "nr": "75",
+  "name": "Pasta mista",
+  "desc": "3 verschiedene Nudelsorten in 3 verschiedenen Soßen",
+  "price": 12.0,
+  "cat": "/c/Nudeln/"
+ },
+ "76": {
+  "nr": "76",
+  "name": "Tagliatelle Gorgonzola",
+  "desc": "Bandnudeln in Gorgonzolasoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "77": {
+  "nr": "77",
+  "name": "Tagliatelle verdi al salmone",
+  "desc": "Grüne Bandnudeln mit frischem Lachs in Tomaten- und Sahnesoße",
+  "price": 12.0,
+  "cat": "/c/Nudeln/"
+ },
+ "78": {
+  "nr": "78",
+  "name": "Tagliatelle verdi al Reviere",
+  "desc": "Grüne Bandnudeln mit frischen Champignons und grünem Pfeffer in Sahnesoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "79": {
+  "nr": "79",
+  "name": "Tagliatelle Gomberetti",
+  "desc": "Grüne Bandnudeln mit Krabben und Knoblauch in Tomatensoße",
+  "price": 12.0,
+  "cat": "/c/Nudeln/"
+ },
+ "80": {
+  "nr": "80",
+  "name": "Penne arabiata",
+  "desc": "Oliven, Peperoni scharf und Knoblauch in Tomatensoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "81": {
+  "nr": "81",
+  "name": "Penne al Tonno",
+  "desc": "Thunfisch in Tomatensoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "82": {
+  "nr": "82",
+  "name": "Penne Matrigiana",
+  "desc": "Zwiebeln, Paprika und Speck in Sahne- und Tomatensoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "83": {
+  "nr": "83",
+  "name": "Penne Siciliane",
+  "desc": "Auberginen in Tomaten – Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "84": {
+  "nr": "84",
+  "name": "Penne Boscaiola",
+  "desc": "Erbsen, Zwiebeln und Pilzen in Sahnesoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "85": {
+  "nr": "85",
+  "name": "Ravioli Rosa",
+  "desc": "Vorderschinken in Sahne- und Tomatensoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "86": {
+  "nr": "86",
+  "name": "Ravioli alla Siziliane",
+  "desc": "Brokkoli und Mozzarella in Sahnesoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "87": {
+  "nr": "87",
+  "name": "Ravioli Copretto",
+  "desc": "Frische Champignons und Schafskäse in Sahnesoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "88": {
+  "nr": "88",
+  "name": "Raviolni",
+  "desc": "Gefüllt mit Ricotta Frischkäse und Basilikum, mit Broccoli und frischen Pilzen in Sahnesoße",
+  "price": 10.5,
+  "cat": "/c/Nudeln/"
+ },
+ "89": {
+  "nr": "89",
+  "name": "Tortelloni Contadina",
+  "desc": "Hausgemacht, gefüllt mit Spinat und frischem Käse in Sahnesoße",
+  "price": 10.5,
+  "cat": "/c/Nudeln/"
+ },
+ "90": {
+  "nr": "90",
+  "name": "Tortelloni Taechino",
+  "desc": "Hausgemacht, gefüllt mit Spinat und frischem Käse mit Champignons und Brokkoli in Sahne – Tomatensoß",
+  "price": 11.0,
+  "cat": "/c/Nudeln/"
+ },
+ "91": {
+  "nr": "91",
+  "name": "Tortelloni al Salmone",
+  "desc": "Hausgemacht, gefüllt mit frischem Lachs mit Mozzarella in Sahnesoße",
+  "price": 11.0,
+  "cat": "/c/Nudeln/"
+ },
+ "92": {
+  "nr": "92",
+  "name": "Gnocchi al Corgonzola",
+  "desc": "Gnocchi in Gorgonzolasoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "93": {
+  "nr": "93",
+  "name": "Gnocchi Bolognese",
+  "desc": "Gnocchi in Hackfleischsoße",
+  "price": 9.0,
+  "cat": "/c/Nudeln/"
+ },
+ "94": {
+  "nr": "94",
+  "name": "Gnocchi ai Spinaci",
+  "desc": "Gnocchi mit Spinat in Gorgonzolasoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "95": {
+  "nr": "95",
+  "name": "Lasagne",
+  "desc": "Eier-Nudelteigscheiben mit Bechamelsoße",
+  "price": 9.5,
+  "cat": "/c/Nudeln/"
+ },
+ "96": {
+  "nr": "96",
+  "name": "Lasagne spezial",
+  "desc": "Eier-Nudelteigscheiben mit Vorderschinken und Pilzen",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "97": {
+  "nr": "97",
+  "name": "Combinazion",
+  "desc": "3 verschiedene Nudelsorten",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "98": {
+  "nr": "98",
+  "name": "Tortellini al Forno",
+  "desc": "Mit Hackfleischsoße und Bechamelsoß",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "99": {
+  "nr": "99",
+  "name": "Rigatoni al Forno",
+  "desc": "Mit Vorderschinken, Pilzen und Ei in Hackfleischsoße",
+  "price": 10.0,
+  "cat": "/c/Nudeln/"
+ },
+ "103": {
+  "nr": "103",
+  "name": "Schnitzel Wiener Art",
+  "desc": "Paniertes Schnitzel nach Wiener Art.",
+  "price": 12.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "104": {
+  "nr": "104",
+  "name": "Jägerschnitzel",
+  "desc": "Paniertes Schnitzel mit Jägersoße",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "105": {
+  "nr": "105",
+  "name": "Rahmschnitzel",
+  "desc": "Paniertes Schnitzel mit Rahmsoße",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "106": {
+  "nr": "106",
+  "name": "Paprikaschnitzel",
+  "desc": "Paniertes Schnitzel mit Paprikasoße",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "107": {
+  "nr": "107",
+  "name": "Schnitzel Diavolo",
+  "desc": "Natur mit Prapika, Pilzen, Koblauch in scharfer Tomatensoße",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "108": {
+  "nr": "108",
+  "name": "Schnitzel con Cipola",
+  "desc": "Paniertes Schnitzel mit Zwiebeln",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "109": {
+  "nr": "109",
+  "name": "Schnitzel pizzaiola",
+  "desc": "Paniertes Schnitzel  mit Kapern, Oliven und Knoblauch in Tomatensoße",
+  "price": 15.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "110": {
+  "nr": "110",
+  "name": "Schnitzel Parmigiana",
+  "desc": "Paniertes Schnitzel mit Vorderschinken Parmesankäse und Bolognesesoße, überbacken",
+  "price": 16.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "111": {
+  "nr": "111",
+  "name": "Prager Schnitzel",
+  "desc": "Paniertes Schnitzel mit Vorderschinken, Spargel- und Rahmsoße, überbacken",
+  "price": 16.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "112": {
+  "nr": "112",
+  "name": "Cordon Bleu",
+  "desc": "Schnitzel gefüllt mit Vorderschinken und Käse",
+  "price": 16.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "115": {
+  "nr": "115",
+  "name": "Scaloppina al Vino bianco",
+  "desc": "Kalbsschnitzel in Weißweinsoße",
+  "price": 19.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "116": {
+  "nr": "116",
+  "name": "Scaloppina al Limone",
+  "desc": "Kalbsschnitzel in Zitronensoße",
+  "price": 19.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "117": {
+  "nr": "117",
+  "name": "Scaloppina tropical",
+  "desc": "Kalbsschnitzel in Parmigian-Käsesoße",
+  "price": 19.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "118": {
+  "nr": "118",
+  "name": "Scaloppina alla Romana",
+  "desc": "Gefüllte Kalbsmedaillons mit Vorderschinken, Käse und Salbei in Weißweinsoße",
+  "price": 21.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "119": {
+  "nr": "119",
+  "name": "Scaloppina Funghi",
+  "desc": "Kalbsschnitzel mit frischen Pilzen in Sahnesoße",
+  "price": 19.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "120": {
+  "nr": "120",
+  "name": "Scaloppina Pizzaiola",
+  "desc": "Kalbsschnitzel mit Oliven, Kapern, Knoblauch in Tomatensoße",
+  "price": 19.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "121": {
+  "nr": "121",
+  "name": "Scaloppina Gorgonzola",
+  "desc": "Kalbsschnitzel in Gorgonzolasoße",
+  "price": 19.5,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "122": {
+  "nr": "122",
+  "name": "Bistecca alla Ferri",
+  "desc": "Rumpsteak mit Kräuterbutter",
+  "price": 25.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "123": {
+  "nr": "123",
+  "name": "Bistecca alla Griglia",
+  "desc": "Rumpsteak gegrillt",
+  "price": 24.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "124": {
+  "nr": "124",
+  "name": "Bistecca con Cipolla",
+  "desc": "Rumpsteak mit goldbraun gebratenen Zwiebeln",
+  "price": 26.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "125": {
+  "nr": "125",
+  "name": "Bistecca Gorgonzola",
+  "desc": "Rumpsteak in Gorgonzolasoße",
+  "price": 26.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "126": {
+  "nr": "126",
+  "name": "Bistecca alla Chef",
+  "desc": "Rumpsteak in Rahmpfeffersoße",
+  "price": 26.0,
+  "cat": "/c/Fleischgerichte/"
+ },
+ "133": {
+  "nr": "133",
+  "name": "Calamari fritti",
+  "desc": "Frittierte Tintenfischringe mit Knoblauchsoße",
+  "price": 14.0,
+  "cat": "/c/Fisch/"
+ },
+ "134": {
+  "nr": "134",
+  "name": "Scampi alla casa",
+  "desc": "Garnelen mit Knoblauch in Weißweinsoße",
+  "price": 18.0,
+  "cat": "/c/Fisch/"
+ },
+ "135": {
+  "nr": "135",
+  "name": "Scampi provinciale",
+  "desc": "Garnelen mit Knoblauch in Tomaten-Weißweinsoße",
+  "price": 18.0,
+  "cat": "/c/Fisch/"
+ },
+ "137": {
+  "nr": "137",
+  "name": "Sogliola al Limone",
+  "desc": "Seezungenfilet in Zitronensoße mit Bratkartoffeln und Gemüse",
+  "price": 20.5,
+  "cat": "/c/Fisch/"
+ },
+ "138": {
+  "nr": "138",
+  "name": "Sogliola al parmigiana",
+  "desc": "Seezungenfilet in Mornaysoße mit Bratkartoffeln und Salat",
+  "price": 20.5,
+  "cat": "/c/Fisch/"
+ },
+ "139": {
+  "nr": "139",
+  "name": "Salmone alla Griglia",
+  "desc": "Lachs gegrillt mit Reis und Salat",
+  "price": 20.5,
+  "cat": "/c/Fisch/"
+ },
+ "140": {
+  "nr": "140",
+  "name": "Salmone con agilo",
+  "desc": "Lachs in Knoblauchsoße und Salzkartoffeln",
+  "price": 21.0,
+  "cat": "/c/Fisch/"
+ },
+ "200": {
+  "nr": "200",
+  "name": "Portion Pommes",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "201": {
+  "nr": "201",
+  "name": "Portion Reis",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "202": {
+  "nr": "202",
+  "name": "Portion Kroketten",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "203": {
+  "nr": "203",
+  "name": "Portion Bratkartoffel",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "204": {
+  "nr": "204",
+  "name": "Portion Joghurtsoẞe",
+  "desc": null,
+  "price": 2.5,
+  "cat": "/c/Extras/"
+ },
+ "205": {
+  "nr": "205",
+  "name": "Portion Knoblauchsoẞe",
+  "desc": null,
+  "price": 2.5,
+  "cat": "/c/Extras/"
+ },
+ "206": {
+  "nr": "206",
+  "name": "Portion Salzakrtoffeln",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "207": {
+  "nr": "207",
+  "name": "Portion Gemüse",
+  "desc": null,
+  "price": 4.0,
+  "cat": "/c/Extras/"
+ },
+ "141": {
+  "nr": "141",
+  "name": "Tartufo",
+  "desc": "Ein köstliches Schokoladendessert aus cremigem Schokoladeneis, umhüllt von einer dünnen Schicht knuspriger Kakaoschale. Serviert mit einer Füllung aus flüssigem Schokoladenkern.",
+  "price": 5.5,
+  "cat": "/c/Nachtisch/"
+ },
+ "144": {
+  "nr": "144",
+  "name": "Tiramisu",
+  "desc": "Luftige Schichten aus Löffelbiskuits, getränkt in aromatischem Espressolikör, cremiger Mascarpone und zartem Kakaopulver.",
+  "price": 5.5,
+  "cat": "/c/Nachtisch/"
+ },
+ "145": {
+  "nr": "145",
+  "name": "Lavakuchen",
+  "desc": "Warm servierter Schokoladenkuchen mit einem fließenden, schokoladigen Kern, wahlweise begleitet von einer Kugel Vanilleeis",
+  "price": 5.5,
+  "cat": "/c/Nachtisch/"
+ }
+}
