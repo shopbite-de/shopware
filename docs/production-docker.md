@@ -94,8 +94,9 @@ content type on upload. `src/Filesystem/CacheControlAwsS3Factory` decorates Shop
 and, when a filesystem has `config.options.cache_control`, writes that value as object metadata on
 every upload (regular writes, streamed uploads and the batch copy used for theme files). The prod
 config sets `public, max-age=31536000, immutable` for public/theme/sitemap. Objects written before
-that change need a one-off metadata rewrite, e.g.
-`mc cp -r --attr "Cache-Control=public, max-age=31536000, immutable" alias/bucket/media/ alias/bucket/media/`.
+that change need a one-off metadata rewrite per object. Note that `mc cp --attr` replaces all
+metadata, so pass the content type too:
+`mc cp --attr "Cache-Control=public, max-age=31536000, immutable;Content-Type=image/webp" alias/bucket/media/x.webp alias/bucket/media/x.webp`.
 
 Live setup: MinIO on the Strato server (`https://veliu-minio.cjcbee.easypanel.host`, bucket
 `shopbite-demo-shopware`, user `shopware-app`), also registered as a Dokploy destination.
@@ -143,6 +144,7 @@ Downtime per deploy is the container recreation of `web` (a few seconds) after `
 - `--mount=type=secret,...,env=` needs `# syntax=docker/dockerfile:1` (the 1.4 frontend from the recipe does not know `env=`). Missing secrets are fine, the mounts are optional.
 - A one-shot compose service (`restart: "no"`) is started again on every `docker compose up -d`, even without changes. That is what makes the Deployment Helper run on every deploy.
 - Symfony 7.4 accepts `TRUSTED_PROXIES=private_ranges`; hard-coding the Traefik IP breaks when Traefik restarts.
+- Never set `SALES_CHANNEL_URL` for the running stack: on every update run the Deployment Helper creates a new "Storefront" sales channel if no channel has exactly that domain, so renaming the domain in the Admin leads to duplicate channels after each deploy. The initial installation falls back to `APP_URL`.
 - Doctrine's DSN parser tolerates `% @ &` in the password only by luck. Use hex passwords (`openssl rand -hex 24`).
 - Dokploy: `docker compose -p <app> --env-file .env -f <file> up -d --build --remove-orphans`; only the service with a domain is attached to `dokploy-network`; UI variables are not injected into containers unless referenced with `${VAR}` or via `env_file`.
 - Shopware Services (Copilot, AI tools, Nexus) try to register on boot and need a public `APP_URL`; `ENABLE_SERVICES=0` keeps them off.

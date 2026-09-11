@@ -122,7 +122,9 @@ services:
       INSTALL_ADMIN_USERNAME: ${INSTALL_ADMIN_USERNAME:-admin}
       INSTALL_ADMIN_PASSWORD: ${INSTALL_ADMIN_PASSWORD:?INSTALL_ADMIN_PASSWORD is required}
       INSTALL_ADMIN_EMAIL: ${INSTALL_ADMIN_EMAIL:-}
-      SALES_CHANNEL_URL: ${SALES_CHANNEL_URL:-${APP_URL}}
+      # Do NOT set SALES_CHANNEL_URL here: the Deployment Helper would re-create a "Storefront"
+      # sales channel on every deploy as soon as no channel carries exactly that domain.
+      # The first installation uses APP_URL for the initial sales channel.
     # assets:install already ran in the image build (shopware-cli project ci)
     entrypoint: ["php", "vendor/bin/shopware-deployment-helper", "run", "--skip-assets-install"]
     depends_on:
