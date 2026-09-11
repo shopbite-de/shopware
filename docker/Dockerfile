@@ -40,4 +40,7 @@ FROM base-image AS final
 
 ENV SHOPWARE_DISABLE_UPDATE_CHECK=1
 
+# Base Caddyfile + long-lived Cache-Control for /media, /thumbnail, /bundles, /theme
+COPY --link docker/Caddyfile /etc/caddy/Caddyfile
+
 COPY --from=build --chown=82 --link /src /var/www/html

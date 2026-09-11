@@ -9,6 +9,7 @@ and the `shopware/docker` 0.3 Flex recipe.
 | File | Purpose |
 | --- | --- |
 | `docker/Dockerfile` | Two-stage build: `shopware-cli project ci` (composer install, asset build, SBOM) → `docker-base:8.4-frankenphp` |
+| `docker/Caddyfile` | Base-image Caddyfile plus `Cache-Control: public, max-age=31536000, immutable` for `/media`, `/thumbnail`, `/bundles`, `/theme` (Lighthouse "efficient cache policy") |
 | `.dockerignore` | Keeps `vendor/`, `var/`, `.env.local`, media, `.git` etc. out of the build context |
 | `.shopware-project.yml` | Build options for `shopware-cli` and deployment options for the Deployment Helper |
 | `compose.prod.yaml` | Self-contained stack: MariaDB, Valkey, `init-perm`, `init` (Deployment Helper), `web`, `worker`, `scheduler` |

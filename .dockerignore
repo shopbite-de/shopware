@@ -39,8 +39,9 @@ public/theme
 public/sitemap
 install.lock
 
-# Docker / compose / make files are not needed inside the image
-docker
+# Docker / compose / make files are not needed inside the image (except the Caddyfile)
+docker/*
+!docker/Caddyfile
 compose.yaml
 compose.override.yaml
 compose.prod.yaml

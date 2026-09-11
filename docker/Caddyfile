@@ -1,0 +1,53 @@
+# Caddyfile for the FrankenPHP base image, copied over /etc/caddy/Caddyfile in docker/Dockerfile.
+# Identical to ghcr.io/shopware/docker-base (frankenphp/rootfs/etc/caddy/Caddyfile) plus
+# long-lived Cache-Control headers for static assets. Safe because every static URL is
+# versioned: media/thumbnail paths contain the upload timestamp (cdn strategy
+# physical_filename), bundles and theme files carry a content hash or version query.
+{
+	skip_install_trust
+
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+:8000 {
+	root * /var/www/html/public
+	encode zstd gzip
+
+	log
+
+	@theme path /theme/*
+	# existing files only: a missing thumbnail must not be cached as 404 for a year
+	@static {
+		path /media/* /thumbnail/* /bundles/*
+		file
+	}
+	@phpRoute {
+		not path /theme/* /media/* /thumbnail/* /bundles/*
+		not file {path}
+	}
+
+	rewrite @phpRoute index.php
+
+	@frontController path index.php
+	php @frontController
+
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	handle @theme {
+		@theme_file file
+		handle @theme_file {
+			header Cache-Control "public, max-age=31536000, immutable"
+			file_server
+		}
+		respond 410
+	}
+	file_server {
+		hide *.php
+	}
+}
