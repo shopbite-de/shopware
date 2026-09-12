@@ -180,11 +180,16 @@ the database is copied 1:1, the Deployment Helper then only runs the update path
 
    Without SSH: upload the dump to a Dokploy S3 destination and use *Backups → Restore* on the Compose service
    (database type MariaDB, service `database`, database `shopware`).
-5. **Redeploy** the service: `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
+5. **Flush Valkey** before redeploying: `docker exec <appName>-valkey-1 valkey-cli FLUSHALL`. The cache still
+   holds the language map of the fresh install (`LanguageLoader`), so the Deployment Helper would resolve locale
+   codes such as `en-GB` to language ids that do not exist in the imported database and plugin installs fail with a
+   foreign-key error on `*_translation.language_id` (seen 2026-09-12 with SwagPayPal). Sessions and carts of the
+   fresh install are worthless anyway.
+6. **Redeploy** the service: `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
    theme compile and clears the cache; `web`/`worker`/`scheduler` are recreated. Then check
    `/api/_info/version`, `/admin` login with an old admin user, `/store-api/shopbite/config` with the
    old sales-channel access key, and a media URL from `/api/search/media`.
-6. **Cutover**: repeat steps 3 to 5 for a final sync at a quiet time (orders keep arriving on the old shop
+7. **Cutover**: repeat steps 3 to 6 for a final sync at a quiet time (orders keep arriving on the old shop
    until the storefront points at the new backend), then switch every client to the new host: the customer's
    Nuxt storefront (`NUXT_PUBLIC_SHOPWARE_ENDPOINT`), the order printer (`SHOPWARE_HOST`) and any other
    integration. `sales_channel_domain` rows keep the storefront domains, only `APP_URL` (Admin, mails,
