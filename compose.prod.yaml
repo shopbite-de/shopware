@@ -40,6 +40,9 @@ x-shopware: &shopware
     S3_ACCESS_KEY: ${S3_ACCESS_KEY:?S3_ACCESS_KEY is required}
     S3_SECRET_KEY: ${S3_SECRET_KEY:?S3_SECRET_KEY is required}
     S3_PUBLIC_URL: ${S3_PUBLIC_URL:?S3_PUBLIC_URL is required (public base URL of the bucket)}
+    # optional separate bucket/prefix for private files (invoices, imports); defaults: same bucket, prefix "private"
+    S3_PRIVATE_BUCKET: ${S3_PRIVATE_BUCKET:-${S3_BUCKET}}
+    S3_PRIVATE_ROOT: ${S3_PRIVATE_ROOT-private}
     # Shopware Services (Copilot, AI tools, Nexus) are off for the headless shop; set 1 to enable
     ENABLE_SERVICES: ${ENABLE_SERVICES:-0}
     TRUSTED_PROXIES: ${TRUSTED_PROXIES:-private_ranges}

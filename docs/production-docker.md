@@ -136,6 +136,64 @@ add `dokploy-network` to the domain service anyway; listing it explicitly keeps 
 
 Downtime per deploy is the container recreation of `web` (a few seconds) after `init` has finished.
 
+## Instances on Dokploy
+
+| Project | Service | URL | Deploys | Image | Files |
+| --- | --- | --- | --- | --- | --- |
+| ShopBite | `shopware` (`shopbite-shopware-hrlk7s`) | https://shopware.shopbite.de | automatic on push to `main` | `shopbite/shopware` | MinIO (Strato), bucket `shopbite-demo-shopware` |
+| Pizzeria La Fattoria | `shopware` (`lafattoria-shopware-odg4uf`) | https://backend.pizzeria-lafattoria.de | **manual only** (Deploy button or `compose.deploy` via API) | `lafattoria/shopware` | Hetzner Object Storage `nbg1`, buckets `lafattoria-public` + `lafattoria-private` |
+
+Both services build from this repository (`main`, `./compose.dokploy.yaml`) on the same Docker host, so
+each one uses its own `IMAGE` name; otherwise the two builds would overwrite each other's `latest` tag.
+The La Fattoria instance replaces the older installation at https://shopware.veliu.net and keeps that
+shop's Hetzner buckets 1:1 (`S3_BUCKET=lafattoria-public`, `S3_PRIVATE_BUCKET=lafattoria-private`,
+`S3_PRIVATE_ROOT=` for the bucket root, `S3_PUBLIC_URL=https://nbg1.your-objectstorage.com/lafattoria-public`),
+so no media has to be copied and media URLs do not change. Its `autoDeploy` is off: a push to `main`
+only updates the demo shop, the customer shop is rolled out deliberately after checking the demo.
+
+## Migrating an existing shop into this stack
+
+Works for a source shop on the same Shopware version (check `/api/_info/version` against `composer.lock`):
+the database is copied 1:1, the Deployment Helper then only runs the update path.
+
+1. **Prepare the Dokploy service** (project, Compose service from this repo, env from `docker/dokploy.env.example`,
+   domain on service `web` port 8000, `autoDeploy` off for customer shops). Point the `S3_*` variables at the
+   source shop's bucket(s) or copy them first. DNS for the new host must point at the Dokploy server before
+   Let's Encrypt can issue the certificate.
+2. **First deploy**: builds the image and performs a fresh install (`INSTALL_*`). That verifies image, S3 and
+   Traefik. The fresh data is thrown away in the next step.
+3. **Dump the source database** on the old host (both shops keep running):
+
+   ```bash
+   mariadb-dump --single-transaction --quick --routines --triggers --hex-blob \
+     --default-character-set=utf8mb4 -u <user> -p <db> | gzip > shopware-$(date +%F).sql.gz
+   ```
+
+4. **Import** on the Dokploy host (the container name follows `<appName>-database-1`; `web`, `worker`
+   and `scheduler` may keep running, the import replaces all tables):
+
+   ```bash
+   DB=$(docker ps -qf name=lafattoria-shopware-odg4uf-database)
+   docker exec $DB sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE shopware; CREATE DATABASE shopware CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"'
+   zcat shopware-*.sql.gz | docker exec -i $DB sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" shopware'
+   ```
+
+   Without SSH: upload the dump to a Dokploy S3 destination and use *Backups → Restore* on the Compose service
+   (database type MariaDB, service `database`, database `shopware`).
+5. **Redeploy** the service: `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
+   theme compile and clears the cache; `web`/`worker`/`scheduler` are recreated. Then check
+   `/api/_info/version`, `/admin` login with an old admin user, `/store-api/shopbite/config` with the
+   old sales-channel access key, and a media URL from `/api/search/media`.
+6. **Cutover**: repeat steps 3 to 5 for a final sync at a quiet time (orders keep arriving on the old shop
+   until the storefront points at the new backend), then switch every client to the new host: the customer's
+   Nuxt storefront (`NUXT_PUBLIC_SHOPWARE_ENDPOINT`), the order printer (`SHOPWARE_HOST`) and any other
+   integration. `sales_channel_domain` rows keep the storefront domains, only `APP_URL` (Admin, mails,
+   sitemap) changes. Finally turn the old stack read-only or off.
+
+Secrets: `APP_SECRET` may differ from the source shop (admin JWTs and CSRF are re-issued, integration access
+keys live in the database and stay valid). Keep `INSTANCE_ID` if Shopware apps or the Store are registered;
+otherwise a new one is fine.
+
 ## Lessons learned (verified 2026-09-11)
 
 - `shopware-cli project ci` is the only deploy build command; there is no `project prod`. It runs composer (no dev), builds missing extension assets, `assets:install`, strips `node_modules` and sources, merges admin snippets and writes `sbom.cdx.json`.

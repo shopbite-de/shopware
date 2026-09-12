@@ -2,10 +2,15 @@
 # containers stay stateless and need no volumes. Configure via S3_* environment variables.
 #
 # Bucket layout:  media/ thumbnail/ theme/ sitemap/  (anonymous read)   private/ (invoices etc., no anonymous access)
+# Private files can live in a separate bucket (S3_PRIVATE_BUCKET, defaults to S3_BUCKET) under
+# S3_PRIVATE_ROOT (defaults to "private"; set it empty to use the bucket root).
 # `asset` (public/bundles, built into the image) deliberately stays local: it would otherwise
 # inherit the S3 config from `public` (see https://developer.shopware.com/docs/guides/hosting/infrastructure/filesystem.html).
 parameters:
     env(S3_REGION): 'us-east-1'
+    env(S3_PRIVATE_ROOT): 'private'
+    # fallback for env(default:...) below: same bucket as the public files
+    s3_private_bucket_fallback: '%env(string:S3_BUCKET)%'
 
 shopware:
     filesystem:
@@ -29,11 +34,11 @@ shopware:
             type: amazon-s3
             visibility: private
             config:
-                bucket: '%env(string:S3_BUCKET)%'
+                bucket: '%env(default:s3_private_bucket_fallback:S3_PRIVATE_BUCKET)%'
                 region: '%env(string:S3_REGION)%'
                 endpoint: '%env(string:S3_ENDPOINT)%'
                 use_path_style_endpoint: true
-                root: private
+                root: '%env(string:S3_PRIVATE_ROOT)%'
                 credentials:
                     key: '%env(string:S3_ACCESS_KEY)%'
                     secret: '%env(string:S3_SECRET_KEY)%'
