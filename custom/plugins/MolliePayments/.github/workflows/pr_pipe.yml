@@ -24,7 +24,7 @@ jobs:
     steps:
 
       - name: Clone Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Create Cache Directories
         run: |
@@ -69,7 +69,7 @@ jobs:
     steps:
 
       - name: Clone Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Mount Build Cache
         uses: actions/cache@v3
