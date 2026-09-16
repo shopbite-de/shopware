@@ -44,7 +44,7 @@ CATS = [  # key, name, icon
  ('nudeln','Nudeln','i-lucide-wheat'),
  ('fleisch','Fleischgerichte','i-lucide-beef'),
  ('fisch','Fisch','i-lucide-fish'),
- ('extras','Extras & Beilagen','i-lucide-utensils'),  # lucide has no french-fries icon
+ ('extras','Extras & Beilagen','i-lucide-circle-plus'),  # lucide has no french-fries icon
  ('nachtisch','Nachtisch','i-lucide-ice-cream-cone'),
  ('getraenke','Getränke','i-lucide-cup-soda'),
 ]
