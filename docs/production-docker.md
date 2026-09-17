@@ -185,7 +185,8 @@ the database is copied 1:1, the Deployment Helper then only runs the update path
    codes such as `en-GB` to language ids that do not exist in the imported database and plugin installs fail with a
    foreign-key error on `*_translation.language_id` (seen 2026-09-12 with SwagPayPal). Sessions and carts of the
    fresh install are worthless anyway.
-6. **Redeploy** the service: `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
+6. **Deploy** the service (`compose.deploy` / "Deploy" button; `compose.redeploy` rebuilds from the existing checkout and does
+   not pull `main`): `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
    theme compile and clears the cache; `web`/`worker`/`scheduler` are recreated. Then check
    `/api/_info/version`, `/admin` login with an old admin user, `/store-api/shopbite/config` with the
    old sales-channel access key, and a media URL from `/api/search/media`.

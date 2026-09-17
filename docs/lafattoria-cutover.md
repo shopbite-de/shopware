@@ -44,10 +44,11 @@ kurzzeitig ~5 GB, mit Swap ok. Zugang: `ssh root@46.224.172.150`. Dokploy-API-Ke
    ssh root@46.224.172.150 'docker exec lafattoria-shopware-odg4uf-valkey-1 valkey-cli FLUSHALL'
    ```
 
-5. **Redeploy** in Dokploy (Button oder API):
+5. **Deploy** in Dokploy (Button "Deploy", nicht "Redeploy": nur `compose.deploy` klont `main` frisch,
+   `compose.redeploy` baut vom vorhandenen Checkout):
 
    ```bash
-   curl -X POST https://panel.shopbite.de/api/compose.redeploy -H "x-api-key: $DOKPLOY_API_KEY" \
+   curl -X POST https://panel.shopbite.de/api/compose.deploy -H "x-api-key: $DOKPLOY_API_KEY" \
      -H 'Content-Type: application/json' -d '{"composeId":"DK2K6r_rK_3GfgxQhB3-j","title":"Final import"}'
    ```
 
@@ -98,6 +99,12 @@ Erkenntnisse aus dem Anlauf, gelten für den nächsten Versuch:
   Integration liegen in der DB und bleiben gültig. Braucht ein Redeploy (Compose-Labels).
 - **Storefront-App**: Env zeigt bereits auf `https://backend.pizzeria-lafattoria.de/store-api/`. Auffällige Werte prüfen:
   Matomo-URL `analytics.sopbite.de`, Ort `Pbertshausen`, Straße `Kanstraße`.
+- **Deploy statt Redeploy**: `compose.redeploy` verwendet den vorhandenen Checkout unter `/etc/dokploy/compose/<appName>/code`.
+  Am 2026-09-17 lief die Instanz dadurch mit 6.7.13.1 auf der importierten 6.7.14.1-Datenbank, bis ein `compose.deploy` folgte.
+  Nach jedem Deploy prüfen: `docker exec <appName>-web-1 php bin/console --version` und `SELECT name, version FROM plugin`.
+- **Druckerdomain**: `shopware.veliu.net` hängt seit 2026-09-17 als zweite Domain am Compose-Service (domainId `nny1J1Sd-lpMGOY1QISTB`).
+  Routing getestet mit `curl -k --resolve shopware.veliu.net:443:46.224.172.150`. Das Zertifikat kommt erst nach dem DNS-Wechsel
+  (bis dahin Traefik-Default-Zertifikat); danach ggf. Traefik neu laden, falls es nicht von selbst ausgestellt wird.
 - **Host-Last**: vor dem Build nur 0.9 GB RAM frei und 2.6 GB Swap belegt. Keine zwei Builds parallel starten.
 
 ## Rückweg
