@@ -14,9 +14,9 @@
     },
     {
       "description": "Renovate reads Shopware's 6.x.y.z as semver, so 6.7 -> 6.8 counts as minor although it is a breaking release",
-      "matchPackageNames": ["shopware/core", "shopware/administration", "shopware/storefront"],
-      "matchUpdateTypes": ["minor"],
-      "automerge": false
+      "matchPackageNames": ["shopware/core"],
+      "automerge": false,
+      "versioning": "loose"
     },
     {
       "description": "Plugins in custom/plugins are path repositories and updated by replacing their source, not via Composer",
