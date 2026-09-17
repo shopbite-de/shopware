@@ -98,8 +98,13 @@ that change need a one-off metadata rewrite per object. Note that `mc cp --attr`
 metadata, so pass the content type too:
 `mc cp --attr "Cache-Control=public, max-age=31536000, immutable;Content-Type=image/webp" alias/bucket/media/x.webp alias/bucket/media/x.webp`.
 
-Live setup: MinIO on the Strato server (`https://veliu-minio.cjcbee.easypanel.host`, bucket
-`shopbite-demo-shopware`, user `shopware-app`), also registered as a Dokploy destination.
+Live setup (since 2026-09-17): Hetzner Object Storage in `fsn1` (`https://fsn1.your-objectstorage.com`, bucket
+`shopbite-demo-shopware`, `S3_REGION=eu-central`), anonymous read on the four public prefixes set with `mc anonymous set download`.
+Until then the bucket lived in a MinIO instance on the Strato server; objects were copied 1:1 with `mc mirror`, which keeps
+`Content-Type` and `Cache-Control`. Dokploy database backups go to the bucket `shopbite-backups` (destination "Hetzner Backup"),
+OpenObserve stores its stream data in `shopbite-openobserve`. Hetzner S3 keys are valid for the whole project, there are no
+bucket-scoped users as in MinIO. After switching the bucket run `bin/console cache:clear` and `cache:clear:http`, the Store API
+caches media URLs.
 
 ## Runtime layout
 
@@ -128,7 +133,7 @@ Setup:
 3. Domains tab: add the shop domain, service `web`, container port `8000`, HTTPS on. Dokploy adds the
    Traefik labels itself; `TRUSTED_PROXIES=private_ranges` makes Shopware trust the forwarded `https`.
 4. Deploy. Watch the `init` container log for the Deployment Helper output.
-5. Enable a Dokploy database backup for `db-data`. Files are in MinIO; `valkey-data` only holds sessions and carts.
+5. Enable a Dokploy database backup for `db-data`. Files are in the S3 bucket; `valkey-data` only holds sessions and carts.
 
 Networking: MariaDB and Valkey stay on the private project network and are not reachable from other
 Dokploy services. `web` is on both the project network and `dokploy-network` (Traefik). Dokploy would
@@ -140,7 +145,7 @@ Downtime per deploy is the container recreation of `web` (a few seconds) after `
 
 | Project | Service | URL | Deploys | Image | Files |
 | --- | --- | --- | --- | --- | --- |
-| ShopBite | `shopware` (`shopbite-shopware-hrlk7s`) | https://shopware.shopbite.de | automatic on push to `main` | `shopbite/shopware` | MinIO (Strato), bucket `shopbite-demo-shopware` |
+| ShopBite | `shopware` (`shopbite-shopware-hrlk7s`) | https://shopware.shopbite.de | automatic on push to `main` | `shopbite/shopware` | Hetzner Object Storage `fsn1`, bucket `shopbite-demo-shopware` |
 | Pizzeria La Fattoria | `shopware` (`lafattoria-shopware-odg4uf`) | https://backend.pizzeria-lafattoria.de | **manual only** (Deploy button or `compose.deploy` via API) | `lafattoria/shopware` | Hetzner Object Storage `nbg1`, buckets `lafattoria-public` + `lafattoria-private` |
 
 Both services build from this repository (`main`, `./compose.dokploy.yaml`) on the same Docker host, so
