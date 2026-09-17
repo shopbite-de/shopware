@@ -190,12 +190,20 @@ the database is copied 1:1, the Deployment Helper then only runs the update path
    codes such as `en-GB` to language ids that do not exist in the imported database and plugin installs fail with a
    foreign-key error on `*_translation.language_id` (seen 2026-09-12 with SwagPayPal). Sessions and carts of the
    fresh install are worthless anyway.
-6. **Deploy** the service (`compose.deploy` / "Deploy" button; `compose.redeploy` rebuilds from the existing checkout and does
+6. **Restore the number range counters.** With `number_range.increment_storage: redis` (our prod config) the counters for
+   order, customer and product numbers live in Valkey (`number_range:<id>` in db 2), not in `number_range_state`. After the
+   flush they are gone and Shopware restarts at the configured start value (on 2026-09-17 a test order got number 10000).
+   If the source shop used SQL storage, copy the state once the new code is running, before the shop goes live:
+   `docker exec <appName>-web-1 php bin/console number-range:migrate SQL Redis`, then compare
+   `valkey-cli -n 2 GET number_range:<id>` with `MAX(order_number)` / `MAX(customer_number)`. Never run that command on a shop
+   that is already taking orders, it would set the counters back to the old SQL values. If the source already used Redis,
+   copy the `number_range:*` keys instead. Raising `start` in the Admin also bumps a counter, as a manual fix.
+7. **Deploy** the service (`compose.deploy` / "Deploy" button; `compose.redeploy` rebuilds from the existing checkout and does
    not pull `main`): `init` runs `system:update:finish` (no-op on equal versions), `plugin:update`,
    theme compile and clears the cache; `web`/`worker`/`scheduler` are recreated. Then check
    `/api/_info/version`, `/admin` login with an old admin user, `/store-api/shopbite/config` with the
    old sales-channel access key, and a media URL from `/api/search/media`.
-7. **Cutover**: repeat steps 3 to 6 for a final sync at a quiet time (orders keep arriving on the old shop
+8. **Cutover**: repeat steps 3 to 7 for a final sync at a quiet time (orders keep arriving on the old shop
    until the storefront points at the new backend), then switch every client to the new host: the customer's
    Nuxt storefront (`NUXT_PUBLIC_SHOPWARE_ENDPOINT`), the order printer (`SHOPWARE_HOST`) and any other
    integration. `sales_channel_domain` rows keep the storefront domains, only `APP_URL` (Admin, mails,

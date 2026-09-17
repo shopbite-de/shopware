@@ -105,6 +105,11 @@ Erkenntnisse aus dem Anlauf, gelten für den nächsten Versuch:
 - **Druckerdomain**: `shopware.veliu.net` hängt seit 2026-09-17 als zweite Domain am Compose-Service (domainId `nny1J1Sd-lpMGOY1QISTB`).
   Routing getestet mit `curl -k --resolve shopware.veliu.net:443:46.224.172.150`. Das Zertifikat kommt erst nach dem DNS-Wechsel
   (bis dahin Traefik-Default-Zertifikat); danach ggf. Traefik neu laden, falls es nicht von selbst ausgestellt wird.
+- **Nummernkreise (nachgetragen 2026-09-17 abends)**: Die Zähler für Bestell-, Kunden- und Produktnummern liegen in Valkey (db 2,
+  `number_range:<id>`), weil die Prod-Konfiguration `increment_storage: redis` nutzt. Das `FLUSHALL` nach dem Import hat sie gelöscht,
+  die erste Testbestellung bekam deshalb die Nummer 10000. Lirim hat die Startwerte im Admin auf 12923 (Bestellungen) und 12700 (Kunden)
+  gesetzt, der Produktzähler wurde per `SETNX` auf 10169 gesetzt. Beim nächsten Import direkt nach dem Deploy und vor dem Livegang
+  `bin/console number-range:migrate SQL Redis` ausführen und die Zähler gegen `MAX(order_number)` prüfen.
 - **Host-Last**: vor dem Build nur 0.9 GB RAM frei und 2.6 GB Swap belegt. Keine zwei Builds parallel starten.
 
 ## Rückweg
