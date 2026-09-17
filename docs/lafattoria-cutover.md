@@ -68,6 +68,38 @@ kurzzeitig ~5 GB, mit Swap ok. Zugang: `ssh root@46.224.172.150`. Dokploy-API-Ke
     für das Dokploy-Backup-Ziel anlegen und Backup dorthin umstellen, Builds mittelfristig vom Host
     nehmen (GitHub Actions oder Build-Server).
 
+## Nachtrag 2026-09-17 (Umzug gestartet und pausiert: Drucker muss vorher umgestellt werden)
+
+Erkenntnisse aus dem Anlauf, gelten für den nächsten Versuch:
+
+- **Alter Host per SSH erreichbar**: `ssh root@194.164.61.70`. Easypanel-Services `pizzeria_shopware`,
+  `pizzeria_worker`, `pizzeria_frontend`, `pizzeria_database` (mysql:8, Root-Passwort in der Container-Env, DB `pizzeria`).
+- **Dump nicht lokal ziehen**, sondern auf dem alten Host ablegen und Server zu Server streamen:
+
+  ```bash
+  ssh root@194.164.61.70 'C=$(docker ps -qf name=pizzeria_database); F=/root/lafattoria-final-$(date -u +%Y%m%dT%H%M%SZ).sql.gz; docker exec $C sh -c '"'"'mysqldump --single-transaction --quick --routines --triggers --hex-blob --no-tablespaces --default-character-set=utf8mb4 -uroot -p"$MYSQL_ROOT_PASSWORD" pizzeria 2>/dev/null'"'"' | gzip > $F; chmod 600 $F; ls -la $F'
+  ssh root@194.164.61.70 'cat /root/lafattoria-final-<ts>.sql.gz' | ssh root@46.224.172.150 'gunzip | docker exec -i lafattoria-shopware-odg4uf-database-1 sh -c '"'"'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" shopware'"'"''
+  ```
+
+  Vorher in eine Wegwerf-DB (`shopware_import_test`) testen, dann `DROP/CREATE DATABASE shopware`, Import, `valkey-cli FLUSHALL`, Redeploy.
+- **Versionen**: alter Shop inzwischen 6.7.14.1, Plugin-Dateien 1.6.0 (in der DB noch 1.4.7, Upgrade offen). Repo `main` ist ebenfalls
+  6.7.14.1 + Plugin 1.6.0. Das Redeploy nach dem Import baut `main` und zieht Migrationen und Plugin-Update nach. Vor jedem Anlauf prüfen,
+  dass der alte Shop nicht neuer ist als `composer.lock`.
+- **Stand der neuen Instanz**: Dump von 2026-09-17 11:03 UTC importiert (2881 Bestellungen, letzte Nr. 12922), Redeploy um 11:07 UTC gestartet.
+  In der neuen Instanz war seit dem 12.09. nichts manuell geändert worden. Bestellungen vergleichen per SQL über SSH
+  (`order-printer/.env.local` zeigt inzwischen auf den Demo-Shop).
+- **Umschaltfenster**: Öffnungszeiten täglich 11:30-14:30 und 17:30-23:00, Dienstag Ruhetag, Samstag nur abends. DNS-TTL der Kundendomains
+  3600 s, also direkt um 14:30 umschalten, dann ist bis 17:30 alles durch. `shopware.veliu.net` hat TTL 150.
+- **Alle Hostnamen des alten Stacks**: `pizzeria-lafattoria.de`, `www.pizzeria-lafattoria.de`, `pizzerialafattoria.de`,
+  `www.pizzerialafattoria.de` (alle 301 auf `https://www.pizzeria-lafattoria.de/`) und `shopware.veliu.net`. In Dokploy: alle vier an die
+  Storefront-App hängen plus `redirects.create` auf www. Domains erst nach dem DNS-Wechsel anlegen, sonst laufen ACME-Fehlversuche auf.
+- **Drucker**: Der Pi pollt `shopware.veliu.net` und lässt sich nur vor Ort umstellen. Variante ohne Pi-Zugriff: `shopware.veliu.net` als
+  zusätzliche Domain an den neuen Compose-Service (`web`, 8000) hängen und den DNS-Eintrag auf 46.224.172.150 drehen. Zugangsdaten der
+  Integration liegen in der DB und bleiben gültig. Braucht ein Redeploy (Compose-Labels).
+- **Storefront-App**: Env zeigt bereits auf `https://backend.pizzeria-lafattoria.de/store-api/`. Auffällige Werte prüfen:
+  Matomo-URL `analytics.sopbite.de`, Ort `Pbertshausen`, Straße `Kanstraße`.
+- **Host-Last**: vor dem Build nur 0.9 GB RAM frei und 2.6 GB Swap belegt. Keine zwei Builds parallel starten.
+
 ## Rückweg
 
 Solange der alte Stack läuft: DNS und Storefront-Variable zurückdrehen, Order-Printer zurück auf
