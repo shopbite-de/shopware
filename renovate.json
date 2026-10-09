@@ -6,6 +6,7 @@
   "includePaths": ["composer.json"],
   "ignoreTests": true,
   "platformAutomerge": false,
+  "postUpdateOptions": ["composerWithAll"],
   "packageRules": [
     {
       "description": "Automerge minor and patch updates",
@@ -13,10 +14,11 @@
       "automerge": true
     },
     {
-      "description": "Renovate reads Shopware's 6.x.y.z as semver, so 6.7 -> 6.8 counts as minor although it is a breaking release",
-      "matchPackageNames": ["shopware/core"],
-      "automerge": false,
-      "versioning": "loose"
+      "description": "Shopware core, administration and storefront require each other's exact version, so they are updated together and only in the lock file (v6.7.*.* keeps 6.8 out)",
+      "matchPackageNames": ["shopware/core", "shopware/administration", "shopware/storefront"],
+      "groupName": "shopware",
+      "rangeStrategy": "update-lockfile",
+      "automerge": false
     },
     {
       "description": "Plugins in custom/plugins are path repositories and updated by replacing their source, not via Composer",
