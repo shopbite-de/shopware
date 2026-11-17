@@ -146,15 +146,12 @@ Downtime per deploy is the container recreation of `web` (a few seconds) after `
 | Project | Service | URL | Deploys | Image | Files |
 | --- | --- | --- | --- | --- | --- |
 | ShopBite | `shopware` (`shopbite-shopware-hrlk7s`) | https://shopware.shopbite.de | automatic on push to `main` | `shopbite/shopware` | Hetzner Object Storage `fsn1`, bucket `shopbite-demo-shopware` |
-| Pizzeria La Fattoria | `shopware` (`lafattoria-shopware-odg4uf`) | https://backend.pizzeria-lafattoria.de | **manual only** (Deploy button or `compose.deploy` via API) | `lafattoria/shopware` | Hetzner Object Storage `nbg1`, buckets `lafattoria-public` + `lafattoria-private` |
 
-Both services build from this repository (`main`, `./compose.dokploy.yaml`) on the same Docker host, so
-each one uses its own `IMAGE` name; otherwise the two builds would overwrite each other's `latest` tag.
-The La Fattoria instance replaces the older installation at https://shopware.veliu.net and keeps that
-shop's Hetzner buckets 1:1 (`S3_BUCKET=lafattoria-public`, `S3_PRIVATE_BUCKET=lafattoria-private`,
-`S3_PRIVATE_ROOT=` for the bucket root, `S3_PUBLIC_URL=https://nbg1.your-objectstorage.com/lafattoria-public`),
-so no media has to be copied and media URLs do not change. Its `autoDeploy` is off: a push to `main`
-only updates the demo shop, the customer shop is rolled out deliberately after checking the demo.
+Customer shops are further services built from this repository (`main`, `./compose.dokploy.yaml`) on the
+same Docker host, so each one uses its own `IMAGE` name; otherwise the builds would overwrite each other's
+`latest` tag. A customer shop migrated from an older installation can keep that shop's buckets 1:1, so no
+media has to be copied and media URLs do not change. Customer services have `autoDeploy` off: a push to
+`main` only updates the demo shop, customer shops are rolled out deliberately after checking the demo.
 
 ## Migrating an existing shop into this stack
 
@@ -178,7 +175,7 @@ the database is copied 1:1, the Deployment Helper then only runs the update path
    and `scheduler` may keep running, the import replaces all tables):
 
    ```bash
-   DB=$(docker ps -qf name=lafattoria-shopware-odg4uf-database)
+   DB=$(docker ps -qf name=<appName>-database)
    docker exec $DB sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE shopware; CREATE DATABASE shopware CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"'
    zcat shopware-*.sql.gz | docker exec -i $DB sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" shopware'
    ```
