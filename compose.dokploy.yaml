@@ -19,6 +19,14 @@ x-shopware: &shopware
     args:
       PHP_VERSION: ${PHP_VERSION:-8.4}
   restart: unless-stopped
+  # Every PHP request opens several short-lived Valkey connections (cache, session,
+  # lock, cart, number ranges), and each closed one blocks its local port for 60 s
+  # (TIME_WAIT). Under a burst of ~200 req/s that exhausts the default 28k ports and
+  # Shopware fails with "Redis connection failed: Cannot assign requested address".
+  # Reuse TIME_WAIT ports for new outgoing connections and widen the port range.
+  sysctls:
+    net.ipv4.tcp_tw_reuse: 1
+    net.ipv4.ip_local_port_range: "10240 65535"
   # Caddy writes one JSON access-log line per request; cap the json-file driver so logs cannot fill the disk
   logging:
     driver: json-file
