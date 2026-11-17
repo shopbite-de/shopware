@@ -8,7 +8,7 @@
 | Dokploy | – | Projekt "Pizzeria La Fattoria", Compose `shopware`, composeId `DK2K6r_rK_3GfgxQhB3-j`, appName `lafattoria-shopware-odg4uf`, **autoDeploy aus** |
 | Version | Shopware 6.7.13.1, ShopBitePlugin 1.4.7 | identisch, zusätzlich MolliePayments + SwagPayPal aus dem Repo (Zahlungsarten inaktiv) |
 | Dateien | Hetzner Object Storage nbg1, `lafattoria-public` + `lafattoria-private` | dieselben Buckets, Cache-Control auf allen Objekten gesetzt |
-| Storefront | pizzeria-lafattoria.de (alter Host) | Dokploy-App `storefront` (applicationId `GS8bbKBWgiVkNhG6y7NNM`, appName `pizzeria-la-fattoria-storefront-o5ur5z`, Repo veliu/pizzerialafattoria), bisher nur sslip.io-Testdomain |
+| Storefront | pizzeria-lafattoria.de (alter Host) | Dokploy-App `storefront` (applicationId `GS8bbKBWgiVkNhG6y7NNM`, appName `pizzeria-la-fattoria-storefront-o5ur5z`), bisher nur sslip.io-Testdomain |
 | Backup | – | Dokploy-Backup `f51Q9ZkATwf3hmHuMgqkz`, täglich 03:00 nach "Strato Minio Backups", 14 Stände |
 | Order-Printer | `SHOPWARE_HOST=https://shopware.veliu.net` | noch umzustellen |
 
