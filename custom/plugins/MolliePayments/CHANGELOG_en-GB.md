@@ -1,6 +1,24 @@
-# unreleased
+# 4.25.1
+- Fixed: Compatibility with Shopware 6.7.11.0 – corrected a typo in the Slovenian snippet ISO code, which is now validated by Shopware.
+- Removed: Credit card brand logos are no longer displayed in the administration order detail view.
+
+# 4.25.0
+- Fixed: Compatibility with NetInventors Bundle plugin - bundle products are now excluded from child line item expansion, preventing order amount mismatches when creating payments with Mollie.
+- Fixed: Bancontact and Satispay payments with status "open" are now correctly treated as failed instead of redirecting to the success page.
+- Fixed: When an order has multiple returns, the refund is now always triggered for the correct return instead of always using the first one found.
+- Fixed: Returns created directly via API with status "done" now correctly trigger a refund. Previously, only returns that went through the open → done transition were processed.
+- Fixed: Using the browser back button during a payment no longer causes unexpected redirects on later visits to the account order list.
+
+# 4.24.1
+- Fixed: Installing the plugin no longer fails when a payment method icon is an SVG containing active content (e.g. `data:` URIs), which Shopware now rejects as a security measure. The installer now falls back to the PNG version of the icon in that case.
+
+# 4.24.0
+- Fixed: PayPal Express no longer fails intermittently with a "missing shipping address" error. The session polling retry loop now waits long enough (up to 7.5 s) for Mollie to receive address data from PayPal.
+- Fixed: PayPal Express guest checkout no longer fails when PayPal returns a single-word account name without a separate first name, which previously caused Shopware's firstName validation to reject the registration.
+- Fixed: PayPal Express now correctly assigns shipping and billing addresses when the customer has a distinct billing address. Two copy-paste bugs caused both addresses to always use the billing address data.
 - Fixed: Switching the payment method after using the browser back button from Mollie now works correctly. If the open payment is not cancelable, the entire Mollie order is canceled and a new order is created with the new payment method.
 - Fixed: Credit card details could not be saved correctly.
+- Changed: Saving credit card data for Single-Click payments.
 - Fixed: Credit card form submit button on the Edit Order page now properly resets its loading state when a validation error occurs, instead of remaining disabled with a spinner.
 - Fixed: Compatibility with ProductBundle plugin (zeobv) - bundle products are now correctly split into their child line items for the Mollie API.
 - Fixed: Webhooks for POS Terminal payments now work correctly.
@@ -8,6 +26,10 @@
 - Fixed: PayPal Express finish endpoint now always returns the correct session token to continue with, including when a guest customer is created and the session changes.
 - Fixed: Apple Pay Direct payment endpoint now always returns the correct session token to continue with after payment completion.
 - Fixed: PayPal Express start endpoint now accepts optional `redirectUrl` and `cancelUrl` for Store API flows and keeps existing fallbacks when fields are omitted.
+- Fixed: Taxes on credit notes created from partial refunds are now recalculated proportionally to the refunded amount instead of carrying the full tax of the original line item.
+- Fixed: When updating order line items, custom fields are now read directly from the order line item entity instead of the payload. This ensures existing custom fields from other vendors are reliably preserved.
+- Fixed: Subscription endpoints in the Store API and account area now verify that the requested subscription belongs to the logged-in customer.
+- Fixed: No more error logs for non-Mollie orders in the order admin.
 
 # 4.23.0
 - New: Added Vipps as a payment method.

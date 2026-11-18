@@ -22,7 +22,6 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\PayPalSDK\Struct\ConstantsV1;
 use Shopware\PayPalSDK\Struct\ConstantsV2;
 use Shopware\PayPalSDK\Struct\V1\Payment\ApplicationContext as ApplicationContextV1;
-use Shopware\PayPalSDK\Struct\V2\Order\ApplicationContext;
 use Shopware\PayPalSDK\Struct\V2\Order\ApplicationContext as ApplicationContextV2;
 use Shopware\PayPalSDK\Struct\V2\Order\PaymentSource\Common\ExperienceContext;
 use Swag\PayPal\Checkout\Payment\Method\PUIHandler;
@@ -46,6 +45,7 @@ use Swag\PayPal\Util\Lifecycle\Method\PaymentMethodDataRegistry;
 use Swag\PayPal\Util\Lifecycle\Method\PUIMethodData;
 use Swag\PayPal\Util\Lifecycle\Method\TrustlyMethodData;
 use Swag\PayPal\Util\Lifecycle\Method\VenmoMethodData;
+use Swag\PayPal\Util\Lifecycle\State\AgenticCommerceService;
 use Swag\PayPal\Util\Lifecycle\State\PaymentMethodStateService;
 use Swag\PayPal\Webhook\Exception\WebhookIdInvalidException;
 use Swag\PayPal\Webhook\WebhookServiceInterface;
@@ -71,11 +71,17 @@ class Update
         private readonly PaymentMethodInstaller $paymentMethodInstaller,
         private readonly PaymentMethodStateService $paymentMethodStateService,
         private readonly PaymentMethodDataRegistry $paymentMethodDataRegistry,
+        private readonly AgenticCommerceService $agenticCommerceService,
     ) {
     }
 
     public function update(UpdateContext $updateContext): void
     {
+        // Development branches have no reliable migration order.
+        if (!\preg_match('/^\d+(?:\.\d+)*$/', $updateContext->getCurrentPluginVersion())) {
+            return;
+        }
+
         if (\version_compare($updateContext->getCurrentPluginVersion(), '1.3.0', '<')) {
             $this->updateTo130();
         }
@@ -158,6 +164,14 @@ class Update
 
         if (\version_compare($updateContext->getCurrentPluginVersion(), '10.6.0', '<')) {
             $this->updateTo1060();
+        }
+
+        if (\version_compare($updateContext->getCurrentPluginVersion(), '10.7.0', '<')) {
+            $this->updateTo1070();
+        }
+
+        if (\version_compare($updateContext->getCurrentPluginVersion(), '10.8.5', '<')) {
+            $this->updateTo1085($updateContext->getContext());
         }
     }
 
@@ -429,7 +443,13 @@ class Update
                 continue;
             }
 
-            if (\in_array($landingPage, ApplicationContext::LANDING_PAGE_TYPES, true)) {
+            if (\in_array($landingPage, ExperienceContext::LANDING_PAGE_TYPES, true)) {
+                continue;
+            }
+
+            if ($landingPage === ApplicationContextV2::LANDING_PAGE_TYPE_BILLING) {
+                $this->systemConfig->set(Settings::LANDING_PAGE, ExperienceContext::LANDING_PAGE_TYPE_GUEST, $salesChannelId);
+
                 continue;
             }
 
@@ -438,12 +458,12 @@ class Update
             }
 
             if ($landingPage === ApplicationContextV1::LANDING_PAGE_TYPE_LOGIN) {
-                $this->systemConfig->set(Settings::LANDING_PAGE, ApplicationContextV2::LANDING_PAGE_TYPE_LOGIN, $salesChannelId);
+                $this->systemConfig->set(Settings::LANDING_PAGE, ExperienceContext::LANDING_PAGE_TYPE_LOGIN, $salesChannelId);
 
                 continue;
             }
 
-            $this->systemConfig->set(Settings::LANDING_PAGE, ApplicationContextV2::LANDING_PAGE_TYPE_BILLING, $salesChannelId);
+            $this->systemConfig->set(Settings::LANDING_PAGE, ExperienceContext::LANDING_PAGE_TYPE_GUEST, $salesChannelId);
         }
     }
 
@@ -455,8 +475,12 @@ class Update
         return $salesChannelIds;
     }
 
-    private function setSettingToDefaultValue(string $setting, ?string $overrideValue = null, ?string $salesChannelId = null): void
+    private function setSettingToDefaultValue(string $setting, mixed $overrideValue = null, ?string $salesChannelId = null): void
     {
+        if ($this->systemConfig->get($setting, $salesChannelId) !== null) {
+            return;
+        }
+
         $value = Settings::DEFAULT_VALUES[$setting] ?? null;
         $this->systemConfig->set($setting, $overrideValue ?? $value, $salesChannelId);
     }
@@ -485,11 +509,11 @@ class Update
     {
         $installmentBannerEnabled = $this->systemConfig->getBool(Settings::SYSTEM_CONFIG_DOMAIN . 'installmentBannerEnabled');
 
-        $this->systemConfig->set(Settings::INSTALLMENT_BANNER_DETAIL_PAGE_ENABLED, $installmentBannerEnabled);
-        $this->systemConfig->set(Settings::INSTALLMENT_BANNER_CART_ENABLED, $installmentBannerEnabled);
-        $this->systemConfig->set(Settings::INSTALLMENT_BANNER_OFF_CANVAS_CART_ENABLED, $installmentBannerEnabled);
-        $this->systemConfig->set(Settings::INSTALLMENT_BANNER_LOGIN_PAGE_ENABLED, $installmentBannerEnabled);
-        $this->systemConfig->set(Settings::INSTALLMENT_BANNER_FOOTER_ENABLED, $installmentBannerEnabled);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_DETAIL_PAGE_ENABLED, $installmentBannerEnabled);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_CART_ENABLED, $installmentBannerEnabled);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_OFF_CANVAS_CART_ENABLED, $installmentBannerEnabled);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_LOGIN_PAGE_ENABLED, $installmentBannerEnabled);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_FOOTER_ENABLED, $installmentBannerEnabled);
     }
 
     private function updateTo900(Context $context): void
@@ -587,6 +611,18 @@ class Update
 
     private function updateTo1060(): void
     {
-        $this->systemConfig->set(Settings::ECS_SHIPPING_CALLBACK_ENABLED, true);
+        $this->setSettingToDefaultValue(Settings::ECS_SHIPPING_CALLBACK_ENABLED, true);
+    }
+
+    private function updateTo1070(): void
+    {
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_LOGO_TYPE);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_TEXT_COLOR);
+        $this->setSettingToDefaultValue(Settings::INSTALLMENT_BANNER_TEXT_SIZE);
+    }
+
+    private function updateTo1085(Context $context): void
+    {
+        $this->agenticCommerceService->addAgenticSalesChannelType($context);
     }
 }

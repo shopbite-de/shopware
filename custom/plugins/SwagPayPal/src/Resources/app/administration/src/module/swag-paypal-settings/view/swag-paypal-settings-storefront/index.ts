@@ -1,5 +1,12 @@
 import template from './swag-paypal-settings-storefront.html.twig';
-import { BUTTON_COLORS, BUTTON_SHAPES } from 'SwagPayPal/constant/swag-paypal-settings.constant';
+import './swag-paypal-settings-storefront.scss';
+import {
+    BUTTON_COLORS,
+    BUTTON_SHAPES,
+    INSTALLMENT_BANNER_LOGO_TYPES,
+    INSTALLMENT_BANNER_TEXT_COLORS,
+    INSTALLMENT_BANNER_TEXT_SIZES,
+} from 'SwagPayPal/constant/swag-paypal-settings.constant';
 import type EntityCollection from "@shopware-ag/meteor-admin-sdk/es/_internals/data/EntityCollection";
 
 const { Criteria } = Shopware.Data;
@@ -24,6 +31,25 @@ export default Shopware.Component.wrapComponentConfig({
             return Shopware.Store.get('swagPayPalSettings');
         },
 
+        merchantInformationStore() {
+            return Shopware.Store.get('swagPayPalMerchantInformation');
+        },
+
+        sdkV6SettingDisabled(): boolean {
+            return (this.merchantInformationStore.isLoading || !this.merchantInformationStore.canSdkV6)
+                && this.settingsStore.getActual('SwagPayPal.settings.sdkV6Enabled') !== true;
+        },
+
+        sdkV6Notice(): string | null {
+            if (this.merchantInformationStore.isLoading || this.merchantInformationStore.canSdkV6) {
+                return null;
+            }
+
+            return this.merchantInformationStore.actual.sdkV6Eligible === false
+                ? this.$t('swag-paypal-settings.sdk.ineligible')
+                : this.$t('swag-paypal-settings.sdk.undetermined');
+        },
+
         buttonColorOptions() {
             return BUTTON_COLORS.map((color) => ({
                 value: color,
@@ -35,6 +61,27 @@ export default Shopware.Component.wrapComponentConfig({
             return BUTTON_SHAPES.map((shape) => ({
                 value: shape,
                 label: this.$t(`swag-paypal-settings.options.buttonShape.${shape}`),
+            }));
+        },
+
+        bannerLogoTypeOptions() {
+            return INSTALLMENT_BANNER_LOGO_TYPES.map((type) => ({
+                value: type,
+                label: this.$t(`swag-paypal-settings.options.installmentLogoType.${type}`),
+            }));
+        },
+
+        bannerTextColorOptions() {
+            return INSTALLMENT_BANNER_TEXT_COLORS.map((color) => ({
+                value: color,
+                label: this.$t(`swag-paypal-settings.options.installmentTextColor.${color}`),
+            }));
+        },
+
+        bannerTextSizeOptions() {
+            return INSTALLMENT_BANNER_TEXT_SIZES.map((size) => ({
+                value: String(size),
+                label: String(size),
             }));
         },
 

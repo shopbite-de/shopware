@@ -1,6 +1,22 @@
 import SwagPaypalAbstractStandalone from './swag-paypal.abstract-standalone';
 import ElementLoadingIndicatorUtil from 'src/utility/loading-indicator/element-loading-indicator.util';
 
+const GOOGLE_PAY_BUTTON_LOCALES = new Set([
+    'en', 'ar', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'es', 'et', 'fi', 'fr', 'hr', 'id', 'it',
+    'ja', 'ko', 'ms', 'nl', 'no', 'pl', 'pt', 'ru', 'sk', 'sl', 'sr', 'sv', 'th', 'tr', 'uk', 'zh',
+]);
+
+// Google Pay uses the macrolanguage code `no` for Norwegian, but locales use the
+// individual Bokmål (`nb`) / Nynorsk (`nn`) subtags. Map those so Norwegian stores
+// still get a localized button instead of falling back to the browser locale.
+const GOOGLE_PAY_LOCALE_ALIASES = {
+    nb: 'no',
+    nn: 'no',
+};
+
+/**
+ * @deprecated tag:v11.0.0 - Will be removed and is replaced by `payment/swag-paypal.checkout.google-pay.ts`
+ */
 export default class SwagPaypalGooglePay extends SwagPaypalAbstractStandalone {
     static options = {
         ...super.options,
@@ -70,7 +86,7 @@ export default class SwagPaypalGooglePay extends SwagPaypalAbstractStandalone {
             callbackIntents: ['PAYMENT_AUTHORIZATION'],
             transactionInfo: {
                 countryCode,
-                totalPriceStatus: 'ESTIMATED', // 'FINAL',
+                totalPriceStatus: 'FINAL',
                 totalPriceLabel: 'Grand Total',
                 currencyCode: this.options.currency,
                 totalPrice: this.options.totalPrice,
@@ -80,8 +96,10 @@ export default class SwagPaypalGooglePay extends SwagPaypalAbstractStandalone {
 
         gpClient.prefetchPaymentData(paymentDataRequest);
 
+        const buttonLocale = this.getButtonLocale();
         const button = gpClient.createButton({
             allowedPaymentMethods,
+            ...(buttonLocale ? { buttonLocale } : {}),
             onClick: () => {
                 if (this.confirmOrderForm.reportValidity())
                     gpClient.loadPaymentData(paymentDataRequest).catch();
@@ -107,7 +125,11 @@ export default class SwagPaypalGooglePay extends SwagPaypalAbstractStandalone {
         }
 
         if ('PAYER_ACTION_REQUIRED' === confirmOrderResponse.status) {
-            await paypal.Googlepay().initiatePayerAction({orderId});
+            paypal.Googlepay().initiatePayerAction({ orderId })
+                .then(() => this.onApprove({ orderId }))
+                .catch((e) => this.onError(e));
+
+            return;
         }
 
         this.onApprove({ orderId });
@@ -127,5 +149,27 @@ export default class SwagPaypalGooglePay extends SwagPaypalAbstractStandalone {
             environment: this.options.sandbox ? 'TEST' : 'PRODUCTION',
             paymentDataCallbacks: { onPaymentAuthorized },
         });
+    }
+
+    getButtonLocale() {
+        const languageIso = this.options.languageIso;
+        if (!languageIso) {
+            return undefined;
+        }
+
+        let language;
+        try {
+            language = new Intl.Locale(languageIso.replace(/_/g, '-')).language;
+        } catch {
+            return undefined;
+        }
+
+        if (!language) {
+            return undefined;
+        }
+
+        const buttonLocale = GOOGLE_PAY_LOCALE_ALIASES[language] ?? language;
+
+        return GOOGLE_PAY_BUTTON_LOCALES.has(buttonLocale) ? buttonLocale : undefined;
     }
 }

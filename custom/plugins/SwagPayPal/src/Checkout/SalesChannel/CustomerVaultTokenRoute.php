@@ -30,6 +30,9 @@ class CustomerVaultTokenRoute
      */
     public function __construct(
         private EntityRepository $vaultRepository,
+        /**
+         * @deprecated tag:v11.0.0 - reason:remove-interface - Interface TokenResourceInterface will be replaced by TokenResource
+         */
         private TokenResourceInterface $tokenResource,
     ) {
     }
@@ -61,7 +64,7 @@ class CustomerVaultTokenRoute
         $criteria->addFilter(new EqualsFilter('mainMapping.paymentMethodId', $context->getPaymentMethod()->getId()));
 
         /** @var VaultTokenEntity|null $vault */
-        $vault = $this->vaultRepository->search($criteria, $context->getContext())->first();
+        $vault = $this->vaultRepository->search($criteria, $context->getContext())->getEntities()->first();
 
         $token = $this->tokenResource->getUserIdToken($context->getSalesChannelId(), $vault?->getTokenCustomer())->getIdToken();
 

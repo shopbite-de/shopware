@@ -36,14 +36,14 @@ class PayPalExpressCheckoutDataService extends AbstractScriptDataService
     public function __construct(
         private readonly CartService $cartService,
         LocaleCodeProvider $localeCodeProvider,
-        private readonly RouterInterface $router,
+        RouterInterface $router,
         private readonly PaymentMethodUtil $paymentMethodUtil,
         SystemConfigService $systemConfigService,
         CredentialsUtilInterface $credentialsUtil,
         private readonly CartPriceService $cartPriceService,
         private readonly PayLaterMethodData $payLaterMethodData,
     ) {
-        parent::__construct($localeCodeProvider, $systemConfigService, $credentialsUtil);
+        parent::__construct($localeCodeProvider, $systemConfigService, $credentialsUtil, $router);
     }
 
     public function buildExpressCheckoutButtonData(
@@ -53,11 +53,7 @@ class PayPalExpressCheckoutDataService extends AbstractScriptDataService
     ): ?ExpressCheckoutButtonData {
         $cart = $this->cartService->getCart($salesChannelContext->getToken(), $salesChannelContext);
 
-        if (!$addProductToCart && $cart->getLineItems()->count() === 0) {
-            return null;
-        }
-
-        if (!$addProductToCart && $this->cartPriceService->hasZeroPrice($cart, $salesChannelContext)) {
+        if (!$addProductToCart && !$this->cartPriceService->isProcessable($cart, $salesChannelContext)) {
             return null;
         }
 
@@ -97,7 +93,7 @@ class PayPalExpressCheckoutDataService extends AbstractScriptDataService
             'addProductToCart' => $addProductToCart,
             'contextSwitchUrl' => $this->router->generate('frontend.paypal.express.prepare_cart'),
             'payPalPaymentMethodId' => $this->paymentMethodUtil->getPayPalPaymentMethodId($context),
-            'createOrderUrl' => $this->router->generate('frontend.paypal.express.create_order'),
+            'createOrderUrl' => $this->router->generate('frontend.paypal.express.create_order', $addProductToCart ? ['addProductToCart' => 1] : []),
             'prepareCheckoutUrl' => $this->router->generate('frontend.paypal.express.prepare_checkout'),
             'checkoutConfirmUrl' => $this->router->generate(
                 'frontend.checkout.confirm.page',

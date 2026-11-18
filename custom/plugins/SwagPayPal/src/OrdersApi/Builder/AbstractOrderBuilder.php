@@ -39,6 +39,8 @@ abstract class AbstractOrderBuilder
 {
     public const PRELIMINARY_ATTRIBUTE = 'isPayPalPreliminaryOrder';
 
+    private const RECURRING_ATTRIBUTE = 'isPayPalRecurringOrder';
+
     /**
      * @internal
      */
@@ -67,6 +69,18 @@ abstract class AbstractOrderBuilder
         $payPalOrder->setPaymentSource($paymentSource);
 
         return $payPalOrder;
+    }
+
+    /**
+     * Builds the order for a payment the merchant initiates without the payer present, e.g. a subscription renewal
+     */
+    public function getRecurringOrder(
+        PaymentTransactionStruct $paymentTransaction,
+        OrderTransactionEntity $orderTransaction,
+        OrderEntity $order,
+        Context $context,
+    ): Order {
+        return $this->getOrder($paymentTransaction, $orderTransaction, $order, $context, new Request([], [], [self::RECURRING_ATTRIBUTE => true]));
     }
 
     public function getOrderFromCart(
@@ -113,8 +127,8 @@ abstract class AbstractOrderBuilder
         $items = $this->submitCart($order->getSalesChannelId()) ? $this->itemListProvider->getItemList($currency, $order) : null;
         $taxStatus = $order->getTaxStatus() ?? $order->getPrice()->getTaxStatus();
 
-        return $this->purchaseUnitProvider->createPurchaseUnit(
-            $orderTransaction->getAmount(),
+        return $this->purchaseUnitProvider->createPurchaseUnitFromPrice(
+            $order->getPrice(),
             $order->getShippingCosts(),
             null,
             $items,
@@ -130,8 +144,7 @@ abstract class AbstractOrderBuilder
         SalesChannelContext $salesChannelContext,
         Cart $cart,
     ): PurchaseUnit {
-        $cartTransaction = $cart->getTransactions()->first();
-        if ($cartTransaction === null) {
+        if ($cart->getTransactions()->first() === null) {
             throw PaymentException::invalidTransaction('');
         }
 
@@ -139,8 +152,8 @@ abstract class AbstractOrderBuilder
             ? $this->itemListProvider->getItemListFromCart($salesChannelContext->getCurrency(), $cart)
             : null;
 
-        return $this->purchaseUnitProvider->createPurchaseUnit(
-            $cartTransaction->getAmount(),
+        return $this->purchaseUnitProvider->createPurchaseUnitFromPrice(
+            $cart->getPrice(),
             $cart->getShippingCosts(),
             $salesChannelContext->getCustomer(),
             $items,
@@ -164,11 +177,15 @@ abstract class AbstractOrderBuilder
         return $intent;
     }
 
+    /**
+     * @deprecated tag:v11.0.0 - reason:new-optional-parameter - Parameter $requestDataBag will be added
+     */
     protected function createExperienceContext(
         OrderEntity|Cart $orderOrCart,
         SalesChannelEntity $salesChannel,
         Context $context,
         ?PaymentTransactionStruct $paymentTransaction = null,
+        /* ?RequestDataBag $requestDataBag = null, */
     ): ExperienceContext {
         $experienceContext = new ExperienceContext();
         $experienceContext->setBrandName($this->getBrandName($salesChannel));
@@ -182,7 +199,17 @@ abstract class AbstractOrderBuilder
             ? ExperienceContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS
             : ExperienceContext::SHIPPING_PREFERENCE_NO_SHIPPING);
 
-        if ($paymentTransaction?->getReturnUrl()) {
+        $requestDataBag = \func_num_args() > 4 ? \func_get_arg(4) : null;
+        if (!$requestDataBag instanceof RequestDataBag) {
+            $requestDataBag = null;
+        }
+
+        $returnUrl = $requestDataBag?->getString(CreateOrderRoute::RETURN_URL) ?: null;
+        $cancelUrl = $requestDataBag?->getString(CreateOrderRoute::CANCEL_URL) ?: null;
+        if ($returnUrl !== null && $cancelUrl !== null) {
+            $experienceContext->setReturnUrl($returnUrl);
+            $experienceContext->setCancelUrl($cancelUrl);
+        } elseif ($paymentTransaction?->getReturnUrl()) {
             $experienceContext->setReturnUrl($paymentTransaction->getReturnUrl());
             $experienceContext->setCancelUrl(\sprintf('%s&cancel=1', $paymentTransaction->getReturnUrl()));
         } else {
@@ -207,6 +234,14 @@ abstract class AbstractOrderBuilder
     protected function submitCart(string $salesChannelId): bool
     {
         return $this->systemConfigService->getBool(Settings::SUBMIT_CART, $salesChannelId);
+    }
+
+    /**
+     * Whether the order is built by {@see self::getRecurringOrder}
+     */
+    protected function isRecurringOrder(Request $request): bool
+    {
+        return $request->attributes->getBoolean(self::RECURRING_ATTRIBUTE);
     }
 
     /**

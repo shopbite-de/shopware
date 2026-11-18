@@ -8,8 +8,8 @@
 namespace Swag\PayPal\Pos\Resource;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Clock\ClockInterface;
 use Shopware\Core\Framework\Log\Package;
-use Shopware\Core\Framework\Util\Hasher;
 use Swag\PayPal\Pos\Api\Authentication\OAuthCredentials;
 use Swag\PayPal\Pos\Api\Authentication\Token;
 use Swag\PayPal\Pos\Client\TokenClientFactory;
@@ -23,20 +23,24 @@ class TokenResource
 
     private TokenClientFactory $tokenClientFactory;
 
+    private ClockInterface $clock;
+
     /**
      * @internal
      */
     public function __construct(
         CacheItemPoolInterface $cache,
         TokenClientFactory $tokenClientFactory,
+        ClockInterface $clock,
     ) {
         $this->cache = $cache;
         $this->tokenClientFactory = $tokenClientFactory;
+        $this->clock = $clock;
     }
 
     public function getToken(OAuthCredentials $credentials): Token
     {
-        $cacheId = Hasher::hash($credentials->getApiKey());
+        $cacheId = $credentials->getCacheKey();
         $token = $this->getTokenFromCache($cacheId);
         if ($token === null || !$this->isTokenValid($token)) {
             $tokenClient = $this->tokenClientFactory->createTokenClient();
@@ -100,7 +104,7 @@ class TokenResource
 
     private function isTokenValid(Token $token): bool
     {
-        $dateTimeNow = new \DateTime('now', new \DateTimeZone('UTC'));
+        $dateTimeNow = $this->clock->now()->setTimezone(new \DateTimeZone('UTC'));
         $dateTimeExpire = $token->getExpireDateTime();
         // Decrease expire date by one hour just to make sure, it doesn't run into an unauthorized exception.
         $dateTimeExpire = $dateTimeExpire->sub(new \DateInterval('PT1H'));

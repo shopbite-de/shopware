@@ -1,6 +1,24 @@
-# unreleased
+# 4.25.1
+- Behoben: Kompatibilität mit Shopware 6.7.11.0 – Tippfehler im ISO-Code der slowenischen Snippet-Sprache korrigiert, der ab dieser Version von Shopware validiert wird.
+- Entfernt: Kreditkarten-Logos werden in der Bestelldetailansicht der Administration nicht mehr angezeigt.
+
+# 4.25.0
+- Behoben: Kompatibilität mit dem NetInventors Bundle Plugin - Bundle-Produkte werden nun von der Erweiterung um Kind-Positionen ausgeschlossen, um Betragsabweichungen beim Erstellen von Zahlungen über Mollie zu verhindern.
+- Behoben: Bancontact- und Satispay-Zahlungen mit Status „open" werden nun korrekt als fehlgeschlagen behandelt, statt auf die Erfolgsseite weiterzuleiten.
+- Behoben: Hat eine Bestellung mehrere Retouren, wird die Erstattung nun immer für die korrekte Retoure ausgelöst und nicht mehr immer die erste gefundene verwendet.
+- Behoben: Retouren, die per API direkt mit dem Status „Abgeschlossen" angelegt werden, lösen jetzt korrekt eine Erstattung aus. Bisher wurden nur Retouren verarbeitet, die den Statuswechsel von „Offen" zu „Abgeschlossen" durchlaufen haben.
+- Behoben: Die Verwendung des Browser-Zurück-Buttons während einer Zahlung führt nicht mehr zu unerwarteten Weiterleitungen beim späteren Besuch der Bestellübersicht.
+
+# 4.24.1
+- Behoben: Die Installation des Plugins schlägt nicht mehr fehl, wenn ein Zahlungsarten-Icon ein SVG mit aktivem Inhalt (z.B. `data:`-URIs) enthält, das Shopware aus Sicherheitsgründen ablehnt. Der Installer fällt in diesem Fall auf die PNG-Version des Icons zurück.
+
+# 4.24.0
+- Behoben: PayPal Express schlägt nicht mehr sporadisch mit einem "fehlende Versandadresse"-Fehler fehl. Die Session-Polling-Schleife wartet nun lange genug (bis zu 7,5 s), bis Mollie die Adressdaten von PayPal erhalten hat.
+- Behoben: Der PayPal Express Gast-Checkout schlägt nicht mehr fehl, wenn PayPal einen einwortigen Kontonamen ohne separaten Vornamen zurückgibt, was zuvor dazu führte, dass Shopwares Vorname-Validierung die Registrierung ablehnte.
+- Behoben: PayPal Express weist nun Versand- und Rechnungsadresse korrekt zu, wenn der Kunde eine separate Rechnungsadresse hat. Zwei Copy-Paste-Fehler führten dazu, dass beide Adressen immer die Rechnungsadressdaten verwendeten.
 - Behoben: Der Wechsel der Zahlungsmethode nach Verwendung des Browser-Zurueck-Buttons von Mollie funktioniert nun korrekt. Wenn die offene Zahlung nicht stornierbar ist, wird die gesamte Mollie-Bestellung storniert und eine neue Bestellung mit der neuen Zahlungsmethode erstellt.
 - Behoben: Kreditkartendaten konnten nicht korrekt gespeichert werden.
+- Verändert: Speicherung von Kreditkartendaten bei Single-Click-Zahlungen.
 - Behoben: Der Submit-Button des Kreditkartenformulars auf der Bestellbearbeitungsseite setzt seinen Ladezustand nun korrekt zurück, wenn ein Validierungsfehler auftritt, anstatt deaktiviert mit einem Spinner zu bleiben.
 - Behoben: Kompatibilität mit dem ProductBundle-Plugin (zeobv) - Bundle-Produkte werden nun korrekt in ihre einzelnen Positionen aufgeteilt für die Mollie API.
 - Behoben: Webhooks für POS-Terminal-Zahlungen funktionieren nun korrekt.
@@ -8,6 +26,10 @@
 - Behoben: Der PayPal Express Finish-Endpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Ablauf verwendet werden soll, auch wenn ein Gastkunde erstellt wird und sich die Session ändert.
 - Behoben: Der Apple Pay Direct Zahlungsendpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Zahlungsabschluss verwendet werden soll.
 - Behoben: Der PayPal Express Start-Endpunkt akzeptiert jetzt optional `redirectUrl` und `cancelUrl` fuer Store-API-Flows und behaelt die bisherigen Fallbacks bei, wenn Felder fehlen.
+- Behoben: Steuern auf Gutschriften, die aus Teilerstattungen erzeugt werden, werden nun proportional zum erstatteten Betrag neu berechnet, statt die volle Steuer der ursprünglichen Bestellposition zu übernehmen.
+- Behoben: Beim Aktualisieren von OrderLineItems werden Custom Fields nun direkt vom OrderLineItem-Entity ausgelesen statt aus dem Payload. Dadurch bleiben bestehende Custom Fields anderer Hersteller zuverlaessig erhalten.
+- Behoben: Subscription-Endpunkte in der Store API und im Kundenkonto prüfen nun, ob das angefragte Abonnement zum eingeloggten Kunden gehört.
+- Behoben: Keine Fehler-Logs mehr für nicht-Mollie-Bestellungen in der Bestellübersicht.
 
 # 4.23.0
 - Neu: Vipps als Zahlungsmethode hinzugefügt.

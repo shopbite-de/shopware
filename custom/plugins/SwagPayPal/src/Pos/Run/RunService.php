@@ -9,6 +9,7 @@ namespace Swag\PayPal\Pos\Run;
 
 use Doctrine\DBAL\Connection;
 use Monolog\Logger;
+use Psr\Clock\ClockInterface;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -32,6 +33,8 @@ class RunService
 
     private Logger $logger;
 
+    private ClockInterface $clock;
+
     /**
      * @internal
      */
@@ -40,11 +43,13 @@ class RunService
         EntityRepository $logRepository,
         Connection $connection,
         Logger $logger,
+        ClockInterface $clock,
     ) {
         $this->runRepository = $runRepository;
         $this->logRepository = $logRepository;
         $this->connection = $connection;
         $this->logger = $logger;
+        $this->clock = $clock;
     }
 
     public function startRun(string $salesChannelId, string $taskName, array $steps, Context $context): string
@@ -89,7 +94,7 @@ class RunService
     {
         $data = [
             'id' => $runId,
-            'finishedAt' => new \DateTime(),
+            'finishedAt' => $this->clock->now(),
             'status' => $status,
             'messageCount' => 0,
         ];
@@ -107,7 +112,7 @@ class RunService
     public function isRunActive(string $runId, Context $context): bool
     {
         /** @var PosSalesChannelRunEntity|null $run */
-        $run = $this->runRepository->search(new Criteria([$runId]), $context)->first();
+        $run = $this->runRepository->search(new Criteria([$runId]), $context)->getEntities()->first();
 
         if ($run === null) {
             return false;
@@ -149,14 +154,17 @@ class RunService
                         `message_count` = GREATEST(0, `message_count` - 1),
                         `updated_at` = :updatedAt
                     WHERE `id` = :runId',
-            ['runId' => Uuid::fromHexToBytes($runId), 'updatedAt' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT)],
+            [
+                'runId' => Uuid::fromHexToBytes($runId),
+                'updatedAt' => $this->clock->now()->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+            ],
         );
     }
 
     public function getRun(string $runId, Context $context): PosSalesChannelRunEntity
     {
         /** @var PosSalesChannelRunEntity|null $run */
-        $run = $this->runRepository->search(new Criteria([$runId]), $context)->first();
+        $run = $this->runRepository->search(new Criteria([$runId]), $context)->getEntities()->first();
 
         if ($run === null) {
             throw new \RuntimeException('Run not found');

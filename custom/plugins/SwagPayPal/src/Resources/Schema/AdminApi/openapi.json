@@ -1527,23 +1527,34 @@
             "swag_paypal_setting_merchant_information": {
                 "required": [
                     "merchantIntegrations",
-                    "capabilities"
+                    "capabilities",
+                    "sdkV6Eligible"
                 ],
                 "properties": {
                     "merchantIntegrations": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_merchant_integrations"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "capabilities": {
-                        "description": "string> key: paymentMethodId, value: capability (see AbstractMethodData)",
+                        "description": "key: paymentMethodId, value: capability (see AbstractMethodData)",
                         "type": "object",
                         "additionalProperties": {
                             "type": "string"
                         }
+                    },
+                    "sdkV6Eligible": {
+                        "type": "boolean",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2174,6 +2185,7 @@
                     },
                     "dispute_state": {
                         "type": "string",
+                        "nullable": true,
                         "enum": [
                             "REQUIRED_ACTION",
                             "REQUIRED_OTHER_PARTY_ACTION",
@@ -2181,8 +2193,7 @@
                             "RESOLVED",
                             "OPEN_INQUIRIES",
                             "APPEALABLE"
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "dispute_amount": {
                         "$ref": "#/components/schemas/paypal_v1_disputes_item_dispute_amount"
@@ -2195,9 +2206,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_disputes_item_dispute_outcome"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "adjudications": {
                         "type": "array",
@@ -2247,25 +2264,43 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_disputes_item_offer"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "refund_details": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_disputes_item_refund_details"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "communication_details": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_disputes_item_communication_details"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "partner_actions": {
                         "type": "array",
@@ -3046,7 +3081,8 @@
                         "type": "string"
                     },
                     "vetting_status": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "capabilities": {
                         "type": "array",
@@ -3176,9 +3212,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_payment_instruction"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -3278,9 +3320,15 @@
                                 "oneOf": [
                                     {
                                         "$ref": "#/components/schemas/paypal_v1_common_address"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "nullable": true,
+                                        "enum": [
+                                            null
+                                        ]
                                     }
-                                ],
-                                "nullable": true
+                                ]
                             },
                             "shipping_address": {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_item_list_shipping_address"
@@ -3390,9 +3438,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_item_list"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "related_resources": {
                         "type": "array",
@@ -3470,8 +3524,8 @@
                     },
                     "sku": {
                         "type": "string",
-                        "maxLength": 127,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 127
                     },
                     "tax": {
                         "type": "string"
@@ -3530,41 +3584,71 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_related_resource_sale"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "authorization": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_related_resource_authorization"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "order": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_related_resource_order"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "refund": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_related_resource_refund"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "capture": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_payment_transaction_related_resource_capture"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -4171,9 +4255,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_subscription_billing_info"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "application_context": {
                         "$ref": "#/components/schemas/paypal_v1_subscription_application_context"
@@ -4331,9 +4421,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_subscription_subscriber_shipping_address"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -4363,17 +4459,29 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_subscription_subscriber_shipping_address_name"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "address": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v1_subscription_subscriber_shipping_address_address"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -4527,7 +4635,6 @@
                         "type": "string"
                     },
                     "resource": {
-                        "nullable": true,
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v3_payment_token"
@@ -4546,6 +4653,13 @@
                             },
                             {
                                 "$ref": "#/components/schemas/paypal_v1_subscription"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
                         ]
                     },
@@ -4700,31 +4814,31 @@
                     "address_line_1": {
                         "description": "The first line of the address. For example, number or street. For example, 173 Drury Lane.\nRequired for data entry and compliance and risk checks. Must contain the full address.",
                         "type": "string",
-                        "maxLength": 300,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 300
                     },
                     "address_line_2": {
                         "description": "The second line of the address. For example, suite or apartment number.",
                         "type": "string",
-                        "maxLength": 300,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 300
                     },
                     "admin_area_2": {
                         "description": "A city, town, or village. Smaller than $adminArea1",
                         "type": "string",
-                        "maxLength": 120,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 120
                     },
                     "admin_area_1": {
                         "description": "The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.\nFormat for postal delivery. For example, CA and not California.",
                         "type": "string",
-                        "maxLength": 300,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 300
                     },
                     "postal_code": {
                         "type": "string",
-                        "maxLength": 60,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 60
                     },
                     "country_code": {
                         "type": "string",
@@ -4827,6 +4941,17 @@
                         "type": "string",
                         "maxLength": 17,
                         "minLength": 6
+                    }
+                },
+                "type": "object"
+            },
+            "paypal_v2_confirm_order": {
+                "required": [
+                    "payment_source"
+                ],
+                "properties": {
+                    "payment_source": {
+                        "$ref": "#/components/schemas/paypal_v2_order_payment_source"
                     }
                 },
                 "type": "object"
@@ -5232,9 +5357,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "status": {
                         "type": "string"
@@ -5318,9 +5449,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_phone"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "address": {
                         "$ref": "#/components/schemas/paypal_v2_common_address"
@@ -5356,9 +5493,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_afterpay"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "apple_pay": {
                         "$ref": "#/components/schemas/paypal_v2_order_payment_source_apple_pay"
@@ -5367,145 +5510,253 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_pay_upon_invoice"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "bancontact": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_bancontact"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "blik": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_blik"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "boletobancario": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_boletobancario"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "card": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "eps": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_eps"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "ideal": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_ideal"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "klarna": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_klarna"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "multibanco": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_multibanco"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "my_bank": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_my_bank"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "oxxo": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_oxxo"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "p_2_4": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_p24"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "paypal": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_paypal"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "swish": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_swish"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "token": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_token"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "trustly": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_trustly"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "google_pay": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_google_pay"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "venmo": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_venmo"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -5572,17 +5823,29 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "attributes": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -5735,33 +5998,57 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_address"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "authentication_result": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card_authentication_result"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "attributes": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "stored_credential": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card_stored_credential"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -5773,15 +6060,22 @@
                 ],
                 "properties": {
                     "liability_shift": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "three_d_secure": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card_authentication_result_3d_secure"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -5834,6 +6128,86 @@
                     },
                     "previous_network_transaction_reference": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "paypal_v2_order_payment_source_common_app_switch_context": {
+                "required": [
+                    "native_app",
+                    "mobile_web"
+                ],
+                "properties": {
+                    "native_app": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_app_switch_context_native_app_context"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
+                            }
+                        ]
+                    },
+                    "mobile_web": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_app_switch_context_mobile_web_context"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "paypal_v2_order_payment_source_common_app_switch_context_mobile_web_context": {
+                "required": [
+                    "buyer_user_agent"
+                ],
+                "properties": {
+                    "return_flow": {
+                        "type": "string",
+                        "default": "AUTO",
+                        "enum": [
+                            "AUTO",
+                            "MANUAL"
+                        ]
+                    },
+                    "buyer_user_agent": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "paypal_v2_order_payment_source_common_app_switch_context_native_app_context": {
+                "required": [
+                    "os_type",
+                    "os_version"
+                ],
+                "properties": {
+                    "os_type": {
+                        "type": "string",
+                        "enum": [
+                            "ANDROID",
+                            "IOS",
+                            "OTHER"
+                        ]
+                    },
+                    "os_version": {
+                        "type": "string",
+                        "maxLength": 64,
+                        "minLength": 1
                     }
                 },
                 "type": "object"
@@ -5925,9 +6299,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes_customer"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "links": {
                         "type": "array",
@@ -5958,7 +6338,8 @@
                     "cancel_url",
                     "payment_method_preference",
                     "customer_service_instructions",
-                    "order_update_callback_config"
+                    "order_update_callback_config",
+                    "app_switch_context"
                 ],
                 "properties": {
                     "locale": {
@@ -6019,6 +6400,20 @@
                     },
                     "order_update_callback_config": {
                         "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes_order_update_callback_config"
+                    },
+                    "app_switch_context": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_app_switch_context"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -6075,17 +6470,29 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_card"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "attributes": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -6343,9 +6750,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_phone_number"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "address": {
                         "$ref": "#/components/schemas/paypal_v2_common_address"
@@ -6360,9 +6773,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -6494,9 +6913,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_phone_number"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "address": {
                         "$ref": "#/components/schemas/paypal_v2_common_address"
@@ -6505,9 +6930,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_payment_source_common_attributes"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -6561,9 +6992,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_order_purchase_unit_payments"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "supplementary_data": {
                         "$ref": "#/components/schemas/paypal_v2_order_purchase_unit_supplementary_data"
@@ -6593,9 +7030,15 @@
                                 "oneOf": [
                                     {
                                         "$ref": "#/components/schemas/paypal_v2_order_purchase_unit_amount_breakdown"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "nullable": true,
+                                        "enum": [
+                                            null
+                                        ]
                                     }
-                                ],
-                                "nullable": true
+                                ]
                             }
                         },
                         "type": "object"
@@ -6626,9 +7069,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_money"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "insurance": {
                         "$ref": "#/components/schemas/paypal_v2_common_money"
@@ -6689,8 +7138,8 @@
                     },
                     "sku": {
                         "type": "string",
-                        "maxLength": 127,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 127
                     }
                 },
                 "type": "object"
@@ -6779,9 +7228,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_money"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "custom_id": {
                         "type": "string",
@@ -6854,9 +7309,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_money"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "custom_id": {
                         "type": "string",
@@ -6876,13 +7337,13 @@
                     },
                     "invoice_id": {
                         "type": "string",
-                        "maxLength": 127,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 127
                     },
                     "note_to_payer": {
                         "type": "string",
-                        "maxLength": 255,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 255
                     },
                     "seller_protection": {
                         "$ref": "#/components/schemas/paypal_v2_order_purchase_unit_payments_common_seller_protection"
@@ -6985,9 +7446,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v2_common_money"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "custom_id": {
                         "type": "string",
@@ -7007,13 +7474,13 @@
                     },
                     "invoice_id": {
                         "type": "string",
-                        "maxLength": 127,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 127
                     },
                     "note_to_payer": {
                         "type": "string",
-                        "maxLength": 255,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 255
                     },
                     "seller_payable_breakdown": {
                         "$ref": "#/components/schemas/paypal_v2_order_purchase_unit_payments_refund_seller_payable_breakdown"
@@ -7129,18 +7596,18 @@
                     },
                     "sku": {
                         "type": "string",
-                        "maxLength": 127,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 127
                     },
                     "url": {
                         "type": "string",
-                        "maxLength": 2048,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 2048
                     },
                     "image_url": {
                         "type": "string",
-                        "maxLength": 2048,
-                        "nullable": true
+                        "nullable": true,
+                        "maxLength": 2048
                     }
                 },
                 "type": "object"
@@ -7423,9 +7890,6 @@
                         "type": "string"
                     },
                     "value": {
-                        "type": "array",
-                        "items": {},
-                        "nullable": true,
                         "oneOf": [
                             {
                                 "type": "integer"
@@ -7444,6 +7908,13 @@
                                 "items": {
                                     "type": "mixed"
                                 }
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
                         ]
                     },
@@ -7674,9 +8145,15 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/paypal_v3_payment_token_metadata"
+                            },
+                            {
+                                "type": "object",
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"

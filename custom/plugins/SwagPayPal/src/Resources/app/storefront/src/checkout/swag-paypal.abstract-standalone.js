@@ -5,6 +5,9 @@ import PageLoadingIndicatorUtil from 'src/utility/loading-indicator/page-loading
 import SwagPaypalAbstractButtons from '../swag-paypal.abstract-buttons';
 import ElementLoadingIndicatorUtil from 'src/utility/loading-indicator/element-loading-indicator.util';
 
+/**
+ * @deprecated tag:v11.0.0 - Will be removed and is replaced by `base/swag-paypal.checkout.ts`
+ */
 export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButtons {
     static product = 'spb';
 
@@ -49,7 +52,7 @@ export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButt
 
         /**
          * Indicates whether the PayPal button is rendered within a checkout context.
-         * 
+         *
          * @type {boolean}
          */
         isCheckout: true,
@@ -57,18 +60,28 @@ export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButt
 
     init() {
         this.confirmOrderForm = DomAccess.querySelector(document, this.options.confirmOrderFormSelector);
+        this._paypalButton = null;
 
         if (this.options.preventErrorReload) {
             DomAccess.querySelector(this.confirmOrderForm, this.options.confirmOrderButtonSelector).disabled = 'disabled';
 
             return;
-        } else {
-            ElementLoadingIndicatorUtil.create(this.el);
         }
 
         DomAccess.querySelector(this.confirmOrderForm, this.options.confirmOrderButtonSelector).classList.add('d-none');
 
         this._client = new HttpClient();
+
+        this._createPayPalButton();
+    }
+
+    /**
+     * Creates / re-creates the PayPal button without re-applying confirm-form UI setup.
+     *
+     * @private
+     */
+    _createPayPalButton() {
+        ElementLoadingIndicatorUtil.create(this.el);
 
         this.createScript(async (paypal) => {
             // catch sync and async errors - `.catch()` or similar aren't able to do so
@@ -88,7 +101,34 @@ export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButt
             return void this.handleError(this.NOT_ELIGIBLE, true, `Funding for PayPal button is not eligible (${this.getFundingSource(paypal)})`);
         }
 
-        button.render(this.el);
+        this._paypalButton = button;
+
+        return button.render(this.el);
+    }
+
+    onBfcacheRestore() {
+        if (this.options.preventErrorReload) {
+            return;
+        }
+
+        this._closePayPalButton();
+        this.el.replaceChildren();
+        this._createPayPalButton();
+    }
+
+    /**
+     * @private
+     */
+    _closePayPalButton() {
+        if (this._paypalButton && typeof this._paypalButton.close === 'function') {
+            try {
+                this._paypalButton.close();
+            } catch {
+                // button may already be torn down after bfcache restore
+            }
+        }
+
+        this._paypalButton = null;
     }
 
     /**
@@ -125,7 +165,7 @@ export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButt
             onCancel: this.onCancel.bind(this),
 
             /**
-             * Check form validity & show loading spinner on confirm click
+             * Validate the confirm form and guide the user to invalid fields on click
              */
             onClick: this.onClick.bind(this),
 
@@ -192,16 +232,36 @@ export default class SwagPaypalAbstractStandalone extends SwagPaypalAbstractButt
     }
 
     /**
-     * Triggers the form validation
      * @param _
      * @param {{reject: Function, resolve: Function}} actions
      * @returns {*}
      */
     onClick(_, actions) {
-        if (!this.confirmOrderForm.reportValidity()) {
-            return actions.reject();
+        // `checkValidity()` is overridden by Shopware's FormHandler to mark invalid fields with `aria-invalid`.
+        if (this.confirmOrderForm.checkValidity()) {
+            return actions.resolve();
         }
 
-        return actions.resolve();
+        this.focusFirstInvalidField();
+
+        return actions.reject();
+    }
+
+    /**
+     * Scrolls to and focuses the first invalid field of the confirm form to guide the user to it.
+     *
+     * The required checkboxes (terms, revocation) are associated with the form via the `form`
+     * attribute but live outside of it in the DOM, so they are read from `form.elements`.
+     */
+    focusFirstInvalidField() {
+        const field = Array.from(this.confirmOrderForm.elements)
+            .find((element) => !element.validity.valid);
+
+        if (!field) {
+            return;
+        }
+
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        field.focus();
     }
 }

@@ -1,3 +1,73 @@
+# 10.9.0
+- Added support for the PayPal JS SDK v6, which can be enabled in the "Storefront presentation" settings once it is activated for the PayPal merchant account. It is more performant and displays payment buttons and Pay Later banners faster. Template customisations may need to be adapted if enabled. SDK v6 will become the default in version 11 (shopware/SwagPayPal#257)
+- Fixes an issue, where listing Express buttons were rendered more than once after using the browser Back button (shopware/SwagPayPal#856)
+- Fixes an issue, where PayPal Express Checkout did not reliably show the error message when the checkout preparation failed
+- Fixes an issue, where the phone number entered for Pay Upon Invoice was stored on the shipping instead of the billing address, if both differed, causing the payment to fail (shopware/SwagPayPal#857)
+- Fixes an issue, where setting a transaction to paid via an API integration without privileges for the PayPal turnover report failed and prevented flows on the paid state, e.g. after switching from a failed PayPal payment to prepayment (shopware/shopware#21245)
+- Fixes an issue, where the "Cancel and return to shop" link on the PayPal page pointed to `example.com` in PayPal Express Checkout (shopware/shopware#21430)
+- Fixes an issue, where loading the PayPal merchant information, e.g. in the PayPal settings after an onboarding, failed with an error, if PayPal returned a product without vetting status (shopware/shopware#21346)
+- Fixes an issue, where card subscription renewals could fail when the card issuer required 3D Secure, because renewals requested a verification and subscriptions were not flagged as recurring card payments (shopware/shopware#21069)
+- Fixes an issue, where PayPal and Pay Later payments still failed after the customer approved the changed order amount, e.g. after changing the quantity on the confirmation page in PayPal Express Checkout (shopware/SwagPayPal#920)
+- Fixes an issue, where PayPal accounts were not saved for future purchases and subscriptions could not be renewed, if the customer had to approve a changed order amount again
+
+# 10.8.5
+- Fixes an issue, where pending PayPal captures and authorizations were not reflected in the payment state
+- Fixes an issue where late PayPal browser cancellations could cancel payments already being processed, and negative webhooks could incorrectly attempt to cancel fully or partially paid or refunded transactions (shopware/shopware#19221)
+- Fixes an issue where PayPal and Pay Later payments failed after the approved order amount changed, instead of asking the customer to approve the new amount (shopware/SwagPayPal#759)
+- Added the order custom field `swag_paypal_agentic_commerce_sales_channel_id`, which stores the agentic sales channel of orders placed via PayPal Agentic Commerce. The Administration order list labels these orders
+- Fixes an issue, where the "log out guest customer after order" setting kept Pay Upon Invoice guests logged in permanently instead of logging them out once the payment details were shown (shopware/shopware#7962)
+- Fixes an issue, where the PayPal JS could be loaded twice in the storefront
+- Fixes an issue, where PayPal accounts and cards were not saved for future purchases, if PayPal completed the vaulting asynchronously (shopware/SwagPayPal#845)
+- Adds the PayPal Agentic Commerce sales channel type when updating from an older plugin version
+- Updated the payment amount limitations for P24 and Pay Later (shopware/SwagPayPal#581)
+
+# 10.8.4
+- Fixes an issue where updating from a custom plugin version could rerun migrations, overwrite existing PayPal configuration values, or fail because of legacy landing page settings
+- Fixes an issue, where Google Pay payments that required 3D Secure never completed due to blocking the authentication window with the Google Pay one
+- Fixes an issue, where payments with saved cards and recurring payments could fail with `ACTION_DOES_NOT_MATCH_INTENT` when payment acquisition was set to `AUTHORIZE`
+
+# 10.8.3
+- Fixes an issue, where product searches that load only a subset of fields, like the storefront quantity selector's purchase limit request, failed with an error, if the Express Checkout button was enabled for product listings (shopware/SwagPayPal#554)
+
+# 10.8.2
+- Fixes an issue, where PayPal orders could not be placed when the `updated_at` column of the PayPal order transaction table was not nullable
+- Fixes an issue, where line item labels containing line breaks made the PayPal order creation fail for local payment methods like iDEAL, P24, EPS or Bancontact
+
+# 10.8.1
+- Fixes an issue, where the same PayPal order could be used for multiple Shopware orders.
+- Fixes an issue, where a custom tax provider's adjusted total was not charged, because the PayPal order used the stale cart or order transaction amount instead of the taxed total (shopware/SwagPayPal#722)
+- Fixes an issue, where PayPal Express Checkout buttons disappeared after using the browser back button from the checkout page (shopware/shopware#18297)
+- Fixes an issue, where PayPal shipping tracking sync retried 429 RATE_LIMIT_REACHED responses too early instead of respecting the Retry-After header.
+- Fixes an issue, where the extension card context menu showed a raw snippet key instead of "Configure" (shopware/shopware#19028)
+
+# 10.8.0
+- Fixes an issue, where the PayPal Express Checkout failed without customer feedback when shipping to a country that is not assigned to the sales channel (shopware/shopware#15067)
+- Fixes an issue, where PayPal eligibility checks initialized PHP sessions during stateless Store API requests (shopware/SwagPayPal#740)
+- Fixes an issue, where PayPal Express Checkout in a stale offcanvas cart could call the PayPal API with an empty cart and fail without customer feedback (shopware/SwagPayPal#712)
+- Fixes an issue, where the Google Pay button was always displayed in English instead of the sales channel language (shopware/shopware#17804)
+- Fixes an issue, where card payments without 3D Secure data were rejected even when `ACDC_FORCE_3DS` was disabled (shopware/SwagPayPal#714)
+- Changes disabled "Enforce 3D Secure" to allow no 3DS challenge if not required
+
+# 10.7.0
+- Added support for PayPal App Switch (currently only available in the US)
+- Added merchant-configurable appearance settings for the Pay Later installment banner: logo type, text colour, and text size
+- Fixes an issue, where the Smart Payment Buttons failed silently on Safari/iOS when the terms and conditions were not accepted, by guiding the user to the invalid field instead of relying on the browser's native form validation
+
+# 10.6.4
+- Fixes an issue, where net prices could cause the express checkout with shipping callback enabled to fail
+
+# 10.6.3
+- Fixes an issue, where shipping cost discrepancies could cause the express checkout with shipping callback enabled to fail
+
+# 10.6.2
+- Fixes an issue, where stale authorization webhooks could cancel unrelated order transactions
+- Fixes an issue, where the Express Checkout failed when the buyer changed the delivery country to one with rule-restricted shipping methods (shopware/shopware#16295).
+
+# 10.6.1
+- Fixes an issue, where declined PayPal payments were still shown as refundable in the Administration (shopware/SwagPayPal#547)
+- Fixes an issue, where the express checkout shipping callback returned unsupported order fields.
+- Fixes an issue, where ACDC was available for subscriptions without wallet vaulting
+
 # 10.6.0
 - Added setting to disable the shipping callback for express checkouts.
 - Fixes an issue, where the shipping callback required the store-api to be exposed.

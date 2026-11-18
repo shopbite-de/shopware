@@ -9,12 +9,10 @@ import './module/mollie-payments/components/mollie-pluginconfig-support-modal';
 import './module/mollie-payments/components/mollie-pluginconfig-section-order-lifetime-warning';
 import './module/mollie-payments/components/mollie-pluginconfig-element-orderstate-select';
 import './init/api-service.init';
-//import './init/credit-card-components.init';
 import './extension/sw-flow-sequence-action';
 import './extension/structure/sw-search-bar-item';
 import './component/flow-sequence/action-order-ship-modal';
 import './component/flow-sequence/action-order-refund-modal';
-import './component/credit-card-logo';
 import './module/mollie-payments';
 import './module/sw-customer';
 import './module/sw-product';
@@ -36,7 +34,7 @@ import svSE from './snippet/sv-SE';
 import nbNO from './snippet/nb-NO';
 import plPL from './snippet/pl-PL';
 import csCZ from './snippet/cs-CZ';
-import slSL from './snippet/sl-SL';
+import slSI from './snippet/sl-SI';
 import huHU from './snippet/hu-HU';
 import fiFI from './snippet/fi-FI';
 import daDK from './snippet/da-DK';
@@ -71,7 +69,7 @@ Shopware.Locale.extend('pl-PL', plPL);
 // eslint-disable-next-line no-undef
 Shopware.Locale.extend('cs-CZ', csCZ);
 // eslint-disable-next-line no-undef
-Shopware.Locale.extend('sl-SL', slSL);
+Shopware.Locale.extend('sl-SI', slSI);
 // eslint-disable-next-line no-undef
 Shopware.Locale.extend('hu-HU', huHU);
 // eslint-disable-next-line no-undef
