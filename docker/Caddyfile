@@ -3,6 +3,9 @@
 # long-lived Cache-Control headers for static assets. Safe because every static URL is
 # versioned: media/thumbnail paths contain the upload timestamp (cdn strategy
 # physical_filename), bundles and theme files carry a content hash or version query.
+# The access log drops the Store API context token and access key (request and response
+# headers) and masks one-time tokens in query strings; Caddy itself already redacts
+# Cookie, Set-Cookie and Authorization.
 {
 	skip_install_trust
 
@@ -19,7 +22,19 @@
 	root * /var/www/html/public
 	encode zstd gzip
 
-	log
+	log {
+		format filter {
+			wrap json
+			request>headers>Sw-Context-Token delete
+			request>headers>Sw-Access-Key delete
+			resp_headers>Sw-Context-Token delete
+			request>uri query {
+				replace hash REDACTED
+				replace token REDACTED
+				replace em REDACTED
+			}
+		}
+	}
 
 	@theme path /theme/*
 	# existing files only: a missing thumbnail must not be cached as 404 for a year

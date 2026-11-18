@@ -118,6 +118,8 @@ caches media URLs.
 - Valkey uses `volatile-lru`: only keys with a TTL (cache, sessions, locks) are evicted; carts and number ranges are safe. RDB + AOF persistence keeps sessions and carts across restarts. For very large shops split it into an ephemeral (cache) and a persistent (cart/session) instance as recommended in the Shopware Redis guide.
 - The message queue stays on Doctrine (`MESSENGER_TRANSPORT_DSN` default). Scale consumers with `WORKER_REPLICAS`.
 - Logs go to stderr as JSON: `make prod-logs`.
+- The Caddy access log (`docker/Caddyfile`) drops the `Sw-Context-Token` and `Sw-Access-Key` headers and masks the query parameters `hash`, `token` and `em`; Caddy already redacts `Cookie`, `Set-Cookie` and `Authorization`. Client IPs stay in the log.
+- The committed `.env` has no `APP_SECRET` / `INSTANCE_ID`: without them from the environment, Admin API logins and the health check fail instead of running with a secret known from this repository. Local development takes its values from `.env.dev`.
 - Health: `web` reports healthy via `GET /api/_info/health-check`. The base image's own Caddy healthcheck is disabled on `worker`, `scheduler` and `init`, which do not run a web server.
 - Shopware Services (Copilot, AI tools, Nexus) are disabled via `ENABLE_SERVICES=0`. Set it to `1` if you want them; registration needs a publicly reachable `APP_URL`.
 
