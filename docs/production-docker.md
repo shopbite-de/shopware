@@ -40,6 +40,11 @@ plugins from `composer.json` and `custom/plugins`. On later runs it applies migr
 updates plugins and compiles the theme. `web`, `worker` and `scheduler` only start once
 `init` has exited successfully.
 
+`config/packages/prod/shopware.yaml` sets `shopware.deployment.cluster_setup: true`.
+Without it, updating a plugin that lives in `custom/plugins` and is required in the root
+`composer.json` (Mollie, PayPal) makes Shopware run `composer remove` for it inside the
+container, which deletes the plugin's vendor symlink and fails the update.
+
 ## Updating
 
 ```bash

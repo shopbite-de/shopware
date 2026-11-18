@@ -43,6 +43,12 @@ shopware:
     # Extensions are managed from code by the Deployment Helper; hide install/uninstall in the Administration
     deployment:
         runtime_extension_management: false
+        # Every container (init, web, worker, scheduler) is a node with its own image filesystem.
+        # Without this, `plugin:update` of a plugin from custom/plugins that is required in the root
+        # composer.json runs `composer remove` inside the container, which deletes its vendor symlink
+        # and fails the update with "Class ... not found". It also keeps cache:clear from deleting
+        # container caches on one node only and disables the Administration updater.
+        cluster_setup: true
 
 framework:
     cache:
