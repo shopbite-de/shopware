@@ -23,15 +23,22 @@
             <argument type="service" id="request_stack"/>
             <argument type="service" id="Swag\PayPal\Checkout\Cart\Service\ExcludedProductValidator"/>
             <argument type="service" id="Swag\PayPal\Util\Availability\AvailabilityService"/>
+            <argument type="service" id="Swag\PayPal\Checkout\SalesChannel\MethodEligibilityStateService"/>
             <tag name="shopware.cart.validator"/>
+            <tag name="subscription.cart.validator"/>
         </service>
 
         <service id="Swag\PayPal\Checkout\Cart\Service\CartPriceService">
             <argument type="service" id="Swag\PayPal\Util\PriceFormatter"/>
         </service>
 
+        <service id="Swag\PayPal\Checkout\SalesChannel\MethodEligibilityStateService">
+            <argument type="service" id="Shopware\Core\System\SalesChannel\Context\SalesChannelContextPersister"/>
+        </service>
+
         <service id="Swag\PayPal\Checkout\SalesChannel\MethodEligibilityRoute" public="true">
             <argument type="service" id="monolog.logger.paypal"/>
+            <argument type="service" id="Swag\PayPal\Checkout\SalesChannel\MethodEligibilityStateService"/>
         </service>
 
         <service id="Swag\PayPal\Checkout\SalesChannel\CreateOrderRoute" public="true">
@@ -53,6 +60,10 @@
             <argument type="service" id="Swag\PayPal\RestApi\V1\Resource\TokenResource" />
         </service>
 
+        <service id="Swag\PayPal\Checkout\SalesChannel\ClientTokenRoute" public="true">
+            <argument type="service" id="Swag\PayPal\RestApi\V1\Resource\TokenResource" />
+        </service>
+
         <service id="Swag\PayPal\Checkout\SalesChannel\FilteredPaymentMethodRoute"
                  decorates="Shopware\Core\Checkout\Payment\SalesChannel\PaymentMethodRoute"
                  decoration-priority="-1500"
@@ -66,6 +77,7 @@
             <argument type="service" id="request_stack"/>
             <argument type="service" id="Swag\PayPal\Util\Availability\AvailabilityService"/>
             <argument type="service" id="order.repository"/>
+            <argument type="service" id="Swag\PayPal\Checkout\SalesChannel\MethodEligibilityStateService"/>
         </service>
 
         <service id="Swag\PayPal\Checkout\Card\AbstractCardValidator">
@@ -90,6 +102,9 @@
             <argument type="service" id="Swag\PayPal\RestApi\V2\Resource\OrderResource"/>
             <argument type="service" id="Swag\PayPal\Checkout\Payment\Service\VaultTokenService"/>
             <argument type="service" id="order_transaction.repository"/>
+            <call method="setLogger">
+                <argument type="service" id="monolog.logger.paypal"/>
+            </call>
         </service>
 
         <service id="Swag\PayPal\Checkout\Payment\Method\ACDCHandler" parent="Swag\PayPal\Checkout\Payment\Method\AbstractPaymentMethodHandler">
@@ -146,6 +161,12 @@
         <service id="Swag\PayPal\Checkout\Payment\Service\TransactionDataService">
             <argument type="service" id="order_transaction.repository"/>
             <argument type="service" id="Swag\PayPal\Setting\Service\CredentialsUtil" />
+            <argument type="service" id="Swag\PayPal\Checkout\Payment\Service\OrderTransactionService" />
+        </service>
+
+        <service id="Swag\PayPal\Checkout\Payment\Service\OrderTransactionService">
+            <argument type="service" id="Doctrine\DBAL\Connection" />
+            <argument type="service" id="Psr\Clock\ClockInterface" />
         </service>
 
         <service id="Swag\PayPal\Checkout\Payment\Service\VaultTokenService">
@@ -162,12 +183,25 @@
             <tag name="shopware.scheduled.task"/>
         </service>
 
+        <service id="Swag\PayPal\Checkout\Payment\ScheduledTask\OrderTransactionsCleanupTask">
+            <tag name="shopware.scheduled.task"/>
+        </service>
+
+        <service id="Swag\PayPal\Checkout\Payment\ScheduledTask\OrderTransactionsCleanupTaskHandler">
+            <argument type="service" id="scheduled_task.repository"/>
+            <argument type="service" id="logger"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="Psr\Clock\ClockInterface"/>
+            <tag name="messenger.message_handler"/>
+        </service>
+
         <service id="Swag\PayPal\Checkout\Payment\ScheduledTask\TransactionStatusSyncTaskHandler">
             <argument type="service" id="scheduled_task.repository"/>
             <argument type="service" id="logger"/>
             <argument type="service" id="order_transaction.repository"/>
             <argument type="service" id="Swag\PayPal\Util\Lifecycle\Method\PaymentMethodDataRegistry"/>
             <argument type="service" id="messenger.default_bus"/>
+            <argument type="service" id="Psr\Clock\ClockInterface"/>
             <tag name="messenger.message_handler"/>
         </service>
 

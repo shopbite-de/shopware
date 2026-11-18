@@ -1,5 +1,8 @@
 import SwagPayPalScriptBase from '../swag-paypal.script-base';
 
+/**
+ * @deprecated tag:v11.0.0 - Will be removed and is replaced by `swag-paypal.messages.ts`
+ */
 export default class SwagPayPalInstallmentBanner extends SwagPayPalScriptBase {
     static options = {
         ...super.options,
@@ -69,10 +72,20 @@ export default class SwagPayPalInstallmentBanner extends SwagPayPalScriptBase {
          * Available values:
          *  - black
          *  - white
+         *  - monochrome
+         *  - grayscale
          *
          * @type string
          */
         textColor: 'black',
+
+        /**
+         * Text size of the text banner in pixels.
+         * Available values: 10, 12, 16
+         *
+         * @type number
+         */
+        textSize: 12,
 
         /*
          * Streamline options for listing pages, overriding the ones
@@ -94,6 +107,11 @@ export default class SwagPayPalInstallmentBanner extends SwagPayPalScriptBase {
         });
     }
 
+    onBfcacheRestore() {
+        this.el.replaceChildren();
+        this.createInstallmentBanner();
+    }
+
     getBannerConfig() {
         return {
             amount: this.options.amount,
@@ -108,6 +126,7 @@ export default class SwagPayPalInstallmentBanner extends SwagPayPalScriptBase {
                 },
                 text: {
                     color: this.options.textColor,
+                    size: this.options.textSize,
                 },
             },
         };

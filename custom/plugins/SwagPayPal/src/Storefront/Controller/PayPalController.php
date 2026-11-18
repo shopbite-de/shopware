@@ -11,9 +11,11 @@ use Monolog\Level;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Cart\SalesChannel\AbstractCartDeleteRoute;
+use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\Checkout\Order\SalesChannel\OrderService;
 use Shopware\Core\Framework\Api\EventListener\ErrorResponseFactory;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\JWT\JWTException;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\System\SalesChannel\Context\SalesChannelContextService;
@@ -21,21 +23,31 @@ use Shopware\Core\System\SalesChannel\ContextTokenResponse;
 use Shopware\Core\System\SalesChannel\NoContentResponse;
 use Shopware\Core\System\SalesChannel\SalesChannel\AbstractContextSwitchRoute;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Storefront\Controller\StorefrontController;
+use Swag\PayPal\Checkout\Cart\Service\CartPriceService;
+use Swag\PayPal\Checkout\Exception\MissingCountryIdException;
 use Swag\PayPal\Checkout\ExpressCheckout\SalesChannel\AbstractExpressCreateOrderRoute;
 use Swag\PayPal\Checkout\ExpressCheckout\SalesChannel\AbstractExpressPrepareCheckoutRoute;
 use Swag\PayPal\Checkout\ExpressCheckout\SalesChannel\AbstractExpressShippingCallbackRoute;
 use Swag\PayPal\Checkout\PUI\SalesChannel\AbstractPUIPaymentInstructionsRoute;
 use Swag\PayPal\Checkout\PUI\SalesChannel\PUIPaymentInstructionsResponse;
 use Swag\PayPal\Checkout\SalesChannel\AbstractClearVaultRoute;
+use Swag\PayPal\Checkout\SalesChannel\AbstractClientTokenRoute;
 use Swag\PayPal\Checkout\SalesChannel\AbstractCreateOrderRoute;
 use Swag\PayPal\Checkout\SalesChannel\AbstractMethodEligibilityRoute;
 use Swag\PayPal\Checkout\TokenResponse;
 use Swag\PayPal\OrdersApi\Builder\AbstractOrderBuilder;
 use Swag\PayPal\RestApi\Exception\PayPalApiException;
+use Swag\PayPal\Setting\Settings;
+use Swag\PayPal\Storefront\Data\Struct\AbstractScriptData;
+use Swag\PayPal\Storefront\Service\ReturnToken;
+use Swag\PayPal\Storefront\Service\ReturnTokenService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @internal
@@ -58,9 +70,21 @@ class PayPalController extends StorefrontController
         private readonly AbstractExpressShippingCallbackRoute $expressShippingCallbackRoute,
         private readonly AbstractContextSwitchRoute $contextSwitchRoute,
         private readonly AbstractCartDeleteRoute $cartDeleteRoute,
+        private readonly CartService $cartService,
+        private readonly CartPriceService $cartPriceService,
         private readonly AbstractClearVaultRoute $clearVaultRoute,
+        private readonly AbstractClientTokenRoute $clientTokenRoute,
         private readonly LoggerInterface $logger,
+        private readonly ReturnTokenService $returnTokenService,
+        private readonly RouterInterface $router,
+        private readonly SystemConfigService $systemConfigService,
     ) {
+    }
+
+    #[Route(path: '/paypal/client-token', name: 'frontend.paypal.client_token', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
+    public function clientToken(Request $request, SalesChannelContext $salesChannelContext): Response
+    {
+        return $this->clientTokenRoute->getClientToken($request, $salesChannelContext);
     }
 
     #[Route(path: '/paypal/create-order', name: 'frontend.paypal.create_order', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false, AbstractOrderBuilder::PRELIMINARY_ATTRIBUTE => true])]
@@ -68,10 +92,34 @@ class PayPalController extends StorefrontController
     public function createOrder(SalesChannelContext $salesChannelContext, Request $request): Response
     {
         try {
+            $this->addRestoreUrls($salesChannelContext, $request);
+
             return $this->createOrderRoute->createPayPalOrder($salesChannelContext, $request);
         } catch (PayPalApiException $e) {
             return (new ErrorResponseFactory())->getResponseFromException($e);
         }
+    }
+
+    #[Route(path: '/paypal/restore-context/{token}', name: 'frontend.paypal.restore_context', methods: ['GET'], defaults: ['csrf_protected' => false])]
+    public function restoreContext(SalesChannelContext $salesChannelContext, Request $request, string $token): Response
+    {
+        try {
+            $returnToken = $this->returnTokenService->parse($token, $salesChannelContext->getSalesChannelId());
+        } catch (JWTException $e) {
+            $this->logger->warning('Could not restore storefront context from return token', ['error' => $e]);
+
+            return $this->redirectToRoute('frontend.checkout.confirm.page');
+        }
+
+        $this->returnTokenService->restoreContextToken($request, $returnToken);
+
+        if ($returnToken->getReturnTarget() === ReturnToken::TARGET_ACCOUNT_ORDER_EDIT) {
+            return $this->redirectToRoute('frontend.account.edit-order.page', [
+                'orderId' => $returnToken->getOrderId(),
+            ]);
+        }
+
+        return $this->redirectToRoute('frontend.checkout.confirm.page');
     }
 
     #[Route(path: '/paypal/payment-method-eligibility', name: 'frontend.paypal.payment-method-eligibility', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
@@ -87,7 +135,7 @@ class PayPalController extends StorefrontController
     }
 
     #[Route(path: '/paypal/express/prepare-checkout', name: 'frontend.paypal.express.prepare_checkout', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
-    public function expressPrepareCheckout(Request $request, SalesChannelContext $context): ContextTokenResponse
+    public function expressPrepareCheckout(Request $request, SalesChannelContext $context): ContextTokenResponse|Response
     {
         $affiliateCode = $request->getSession()->get(OrderService::AFFILIATE_CODE_KEY);
         $campaignCode = $request->getSession()->get(OrderService::CAMPAIGN_CODE_KEY);
@@ -100,18 +148,36 @@ class PayPalController extends StorefrontController
             $request->request->set(OrderService::CAMPAIGN_CODE_KEY, $campaignCode);
         }
 
-        return $this->expressPrepareCheckoutRoute->prepareCheckout($context, $request);
+        try {
+            return $this->expressPrepareCheckoutRoute->prepareCheckout($context, $request);
+        } catch (PayPalApiException|MissingCountryIdException $e) {
+            return (new ErrorResponseFactory())->getResponseFromException($e);
+        }
     }
 
     #[Route(path: '/paypal/express/create-order', name: 'frontend.paypal.express.create_order', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
     public function expressCreateOrder(Request $request, SalesChannelContext $context): TokenResponse
     {
+        // Same targets as the popup's `cancelRedirectUrl`
+        $cancelUrl = $this->router->generate(
+            $request->query->getBoolean('addProductToCart') ? 'frontend.checkout.cart.page' : 'frontend.checkout.register.page',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+        $request->request->set(AbstractCreateOrderRoute::RETURN_URL, $cancelUrl);
+        $request->request->set(AbstractCreateOrderRoute::CANCEL_URL, $cancelUrl);
+
         return $this->expressCreateOrderRoute->createPayPalOrder($request, $context);
     }
 
     #[Route(path: '/paypal/express/prepare-cart', name: 'frontend.paypal.express.prepare_cart', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
     public function expressPrepareCart(Request $request, SalesChannelContext $context): Response
     {
+        if (!$request->request->getBoolean('deleteCart')) {
+            $cart = $this->cartService->getCart($context->getToken(), $context);
+            $this->cartPriceService->validateProcessable($cart, $context);
+        }
+
         $this->contextSwitchRoute->switchContext(new RequestDataBag([
             SalesChannelContextService::PAYMENT_METHOD_ID => $request->request->getAlnum('paymentMethodId') ?: $request->query->getAlnum('paymentMethodId'),
         ]), $context);
@@ -142,6 +208,16 @@ class PayPalController extends StorefrontController
         operationId: 'paypalHandleError',
         description: 'Adds an error message to the flash bag',
         requestBody: new OA\RequestBody(content: new OA\JsonContent(properties: [
+            new OA\Property(property: 'step', type: 'string'),
+            new OA\Property(property: 'pageType', type: 'string', description: 'Page type "checkout" will prevent any flash messages added', enum: [
+                AbstractScriptData::PAGE_TYPE_CART,
+                AbstractScriptData::PAGE_TYPE_CHECKOUT,
+                AbstractScriptData::PAGE_TYPE_HOME,
+                AbstractScriptData::PAGE_TYPE_MINI_CART,
+                AbstractScriptData::PAGE_TYPE_PRODUCT_DETAILS,
+                AbstractScriptData::PAGE_TYPE_PRODUCT_LISTING,
+                AbstractScriptData::PAGE_TYPE_SEARCH_RESULTS,
+            ]),
             new OA\Property(property: 'code', type: 'string'),
             new OA\Property(property: 'fatal', description: 'Will prevent reinitiate the corresponding payment method.', type: 'boolean', default: false),
             new OA\Property(property: 'error', type: 'string', default: null),
@@ -155,11 +231,19 @@ class PayPalController extends StorefrontController
     #[Route(path: '/paypal/handle-error', name: 'frontend.paypal.handle-error', methods: ['POST'], defaults: ['XmlHttpRequest' => true, 'csrf_protected' => false])]
     public function onHandleError(Request $request, SalesChannelContext $context): Response
     {
-        $code = $request->request->getString('code');
+        $step = \mb_trim($request->request->getString('step')) ?: null;
+        $code = \mb_trim($request->request->getString('code')) ?: null;
+        $pageType = \mb_trim($request->request->getString('pageType')) ?: null;
         $fatal = $request->request->getBoolean('fatal');
+        $plugin = \mb_trim($request->request->getString('plugin')) ?: null;
+        $error = $request->request->getString('error') ?: null;
+
+        /** @deprecated tag:v11.0.0 - Will be removed */
         $isCheckout = $request->request->getBoolean('isCheckout');
 
-        if ($isCheckout) {
+        // we are either on the checkout page or in a js plugin implementing payment.
+        // In both cases any submission error should be shown to the customer
+        if ($pageType === AbstractScriptData::PAGE_TYPE_CHECKOUT || $step === 'SUBMIT_FLOW' || $isCheckout) {
             $snippetGeneric = \sprintf('paypal.error.%s', $code);
             $snippetByMethod = \sprintf('paypal.error.%s.%s', $context->getPaymentMethod()->getFormattedHandlerIdentifier(), $code);
 
@@ -174,7 +258,10 @@ class PayPalController extends StorefrontController
             }
         }
 
-        if ($fatal) {
+        // session key is only read in checkout, if the pageType isn't checkout too
+        // its a JS plugin rendering aside the main one (like pay-later)
+        $isV6Enabled = $this->systemConfigService->getBool(Settings::SDK_V6_ENABLED, $context->getSalesChannelId());
+        if ($fatal && (!$isV6Enabled || $pageType === AbstractScriptData::PAGE_TYPE_CHECKOUT)) {
             $request->getSession()->set(self::PAYMENT_METHOD_FATAL_ERROR, $context->getPaymentMethod()->getId());
         }
 
@@ -182,14 +269,38 @@ class PayPalController extends StorefrontController
             \in_array($code, ['SWAG_PAYPAL__SCRIPT_ERROR', 'SWAG_PAYPAL__SCRIPT_NOT_LOADED'], true) ? Level::Error : Level::Warning,
             'Storefront checkout error',
             [
-                'error' => $request->request->get('error'),
+                'error' => $error,
+                'step' => $step,
                 'code' => $code,
                 'fatal' => $fatal,
+                'plugin' => $plugin,
                 'paymentMethodId' => $context->getPaymentMethod()->getId(),
                 'paymentMethodName' => $context->getPaymentMethod()->getName(),
             ],
         );
 
         return new NoContentResponse();
+    }
+
+    private function addRestoreUrls(SalesChannelContext $salesChannelContext, Request $request): void
+    {
+        $orderId = $request->request->getAlnum('orderId') ?: null;
+        $returnTarget = $orderId !== null
+            ? ReturnToken::TARGET_ACCOUNT_ORDER_EDIT
+            : ReturnToken::TARGET_CHECKOUT_CONFIRM;
+
+        $token = $this->returnTokenService->generate(
+            $salesChannelContext->getToken(),
+            $salesChannelContext->getSalesChannelId(),
+            $returnTarget,
+            $orderId,
+        );
+
+        $restoreUrl = $this->router->generate('frontend.paypal.restore_context', [
+            'token' => $token,
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $request->request->set(AbstractCreateOrderRoute::RETURN_URL, $restoreUrl);
+        $request->request->set(AbstractCreateOrderRoute::CANCEL_URL, $restoreUrl);
     }
 }

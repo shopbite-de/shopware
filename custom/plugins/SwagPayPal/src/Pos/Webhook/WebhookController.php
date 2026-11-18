@@ -147,7 +147,7 @@ class WebhookController extends AbstractController
 
         $this->logger->debug('[Zettle Webhook] Received webhook', ['payload' => $postData]);
 
-        if (empty($postData)) {
+        if ($postData === []) {
             throw new BadRequestHttpException('No webhook data sent');
         }
 
@@ -199,7 +199,7 @@ class WebhookController extends AbstractController
         $criteria->addAssociation(SwagPayPal::SALES_CHANNEL_POS_EXTENSION);
 
         /** @var SalesChannelEntity|null $salesChannel */
-        $salesChannel = $this->salesChannelRepository->search($criteria, $context)->first();
+        $salesChannel = $this->salesChannelRepository->search($criteria, $context)->getEntities()->first();
 
         if ($salesChannel === null) {
             throw new WebhookIdInvalidException($salesChannelId);

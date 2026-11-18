@@ -1,5 +1,8 @@
 import SwagPayPalScriptBase from './swag-paypal.script-base';
 
+/**
+ * @deprecated tag:v11.0.0 - Will be removed and is replaced by `base/swag-paypal.payment.ts`
+ */
 export default class SwagPaypalAbstractButtons extends SwagPayPalScriptBase {
     static options = {
         ...super.options,
@@ -66,12 +69,13 @@ export default class SwagPaypalAbstractButtons extends SwagPayPalScriptBase {
             code = errorCode;
         }
 
+        console.error(`PayPal ${fatal ? 'fatal ' : ''}error occurred: ${code} - ${String(error ?? '')}`);
+
         if (!this.options.handleErrorUrl) {
-            console.error(`PayPal ${fatal ? 'fatal ' : ''}error occurred: ${code} - ${String(error ?? '')}`);
             return;
         }
 
-        const isCheckout = !!this.options.isCheckout; 
+        const isCheckout = !!this.options.isCheckout;
 
         this._client.post(this.options.handleErrorUrl, JSON.stringify({
             code,
@@ -90,7 +94,6 @@ export default class SwagPaypalAbstractButtons extends SwagPayPalScriptBase {
      * @param {Boolean} [fatal=false] - A fatal error will not allow a rerender of the PayPal buttons
      * @param {*} [error=undefined] - The error. Can be any type, but will be converted to a string
      */
-    // eslint-disable-next-line no-unused-vars
     onErrorHandled(code, fatal, error, isCheckout = false) {
         if (isCheckout) {
             window.scrollTo(0, 0);
@@ -132,9 +135,9 @@ export default class SwagPaypalAbstractButtons extends SwagPayPalScriptBase {
      * @private
      * @returns {String|null}
      */
-    _extractErrorCode(error) {
+    _extractErrorCode(unparsedError) {
         try {
-            const errors = JSON.parse(error)?.errors;
+            const errors = JSON.parse(unparsedError)?.errors;
 
             if (!Array.isArray(errors)) {
                 return null;

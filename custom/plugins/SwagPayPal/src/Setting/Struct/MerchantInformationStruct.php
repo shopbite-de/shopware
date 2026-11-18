@@ -20,10 +20,13 @@ class MerchantInformationStruct extends Struct
     protected ?MerchantIntegrations $merchantIntegrations;
 
     /**
-     * @var array<string, string> key: paymentMethodId, value: capability (see AbstractMethodData)
+     * @var array<string,string> key: paymentMethodId, value: capability (see AbstractMethodData)
      */
     #[OA\Property(type: 'object', additionalProperties: new OA\AdditionalProperties(type: 'string'))]
     protected array $capabilities;
+
+    #[OA\Property(type: 'boolean', nullable: true)]
+    protected ?bool $sdkV6Eligible = null;
 
     public function getMerchantIntegrations(): ?MerchantIntegrations
     {
@@ -49,5 +52,15 @@ class MerchantInformationStruct extends Struct
     public function setCapabilities(array $capabilities): void
     {
         $this->capabilities = $capabilities;
+    }
+
+    public function getSdkV6Eligible(): ?bool
+    {
+        return $this->sdkV6Eligible;
+    }
+
+    public function setSdkV6Eligible(?bool $sdkV6Eligible): void
+    {
+        $this->sdkV6Eligible = $sdkV6Eligible;
     }
 }

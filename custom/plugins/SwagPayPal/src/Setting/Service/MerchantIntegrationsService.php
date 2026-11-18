@@ -12,7 +12,7 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\PayPalSDK\Struct\V1\MerchantIntegrations;
 use Swag\PayPal\RestApi\Exception\PayPalApiException;
 use Swag\PayPal\RestApi\V1\Resource\MerchantIntegrationsResourceInterface;
-use Swag\PayPal\RestApi\V1\Resource\TokenResource;
+use Swag\PayPal\RestApi\V1\Resource\TokenResourceInterface;
 use Swag\PayPal\Setting\Exception\PayPalSettingsInvalidException;
 use Swag\PayPal\Setting\Struct\MerchantInformationStruct;
 use Swag\PayPal\Util\Lifecycle\Method\AbstractMethodData;
@@ -28,9 +28,10 @@ class MerchantIntegrationsService
      */
     public function __construct(
         private readonly MerchantIntegrationsResourceInterface $merchantIntegrationsResource,
-        private readonly TokenResource $tokenResource,
+        private readonly TokenResourceInterface $tokenResource,
         private readonly CredentialsUtilInterface $credentialsUtil,
         private readonly PaymentMethodDataRegistry $paymentMethodDataRegistry,
+        private readonly SdkV6EligibilityServiceInterface $sdkV6EligibilityService,
     ) {
     }
 
@@ -41,6 +42,7 @@ class MerchantIntegrationsService
         $integrations = $this->getIntegrations($salesChannelId);
         $information->setMerchantIntegrations($integrations);
         $information->setCapabilities($this->enrichCapabilities($integrations, $context, $salesChannelId));
+        $information->setSdkV6Eligible($this->sdkV6EligibilityService->isEligible($salesChannelId));
 
         return $information;
     }

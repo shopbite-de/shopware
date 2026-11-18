@@ -3,6 +3,9 @@ import DomAccess from 'src/helper/dom-access.helper';
 import ElementLoadingIndicatorUtil from 'src/utility/loading-indicator/element-loading-indicator.util';
 import SwagPaypalAbstractButtons from '../swag-paypal.abstract-buttons';
 
+/**
+ * @deprecated tag:v11.0.0 - Will be removed and is replaced by `payment/swag-paypal.express.*.ts`
+ */
 export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractButtons {
     static options = {
         ...super.options,
@@ -94,7 +97,7 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
 
         /**
          * Indicates whether the PayPal button is rendered within a checkout context.
-         * 
+         *
          * @type {boolean}
          */
         isCheckout: true,
@@ -105,6 +108,7 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
 
     init() {
         this._client = new HttpClient();
+        this._paypalButtons = [];
         this.createButton();
     }
 
@@ -124,13 +128,36 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
                 const button = paypal.Buttons(this.getButtonConfig(fundingSource));
 
                 if (button.isEligible()) {
+                    this._paypalButtons.push(button);
                     button.render(this.el);
                 }
             } catch (e) {
                 this.handleError(this.SCRIPT_ERROR, true, `Error while rendering express button for "${fundingSource}": ${e}`);
             }
         });
+    }
 
+    onBfcacheRestore() {
+        this._closePayPalButtons();
+        this.el.replaceChildren();
+        this.createButton();
+    }
+
+    /**
+     * @private
+     */
+    _closePayPalButtons() {
+        this._paypalButtons.forEach((button) => {
+            if (typeof button.close === 'function') {
+                try {
+                    button.close();
+                } catch {
+                    // button may already be torn down after bfcache restore
+                }
+            }
+        });
+
+        this._paypalButtons = [];
     }
 
     getBuyButtonState() {
@@ -257,6 +284,7 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
                 (responseText, request) => {
                     if (request.status >= 400) {
                         reject(responseText);
+                        return;
                     }
 
                     return Promise.resolve().then(() => {
@@ -275,6 +303,9 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
                         });
                 },
             );
+        }).catch((error) => {
+            this.handleError(this.GENERIC_ERROR, false, error);
+            throw error;
         });
     }
 
@@ -328,15 +359,23 @@ export default class SwagPayPalExpressCheckoutButton extends SwagPaypalAbstractB
                     return actions.redirect(this.options.checkoutConfirmUrl);
                 }
 
-                return this.onError();
+                try {
+                    return this.onError(JSON.parse(request.response));
+                } catch (error) {
+                    console.warn('SwagPayPalExpressCheckout: Could not parse error response', error);
+                    return this.onError();
+                }
             },
         );
     }
 
-    onErrorHandled(code) {
+    onErrorHandled(code, fatal, error, isCheckout = false) {
         if (code === this.USER_CANCELLED) {
             window.scrollTo(0, 0);
             window.location = this.options.cancelRedirectUrl;
+            return;
         }
+
+        super.onErrorHandled(code, fatal, error, isCheckout);
     }
 }

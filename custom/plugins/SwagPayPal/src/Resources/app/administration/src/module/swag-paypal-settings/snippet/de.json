@@ -41,6 +41,18 @@
         "silver": "Silber",
         "white": "Weiß"
       },
+      "installmentLogoType": {
+        "primary": "Primär",
+        "alternative": "Alternativ",
+        "inline": "Inline",
+        "none": "Kein"
+      },
+      "installmentTextColor": {
+        "black": "Schwarz",
+        "white": "Weiß",
+        "monochrome": "Monochrom",
+        "grayscale": "Graustufen"
+      },
       "buttonShape": {
         "sharp": "Rechteckig mit spitzen Ecken",
         "pill": "Rund",
@@ -80,7 +92,14 @@
     },
     "installment": {
       "title": "'Später Bezahlen'-Banner",
-      "subtitle": "Banner erhöhen die Konversionsrate in Deinem Shop und stellen für Dich als Händler kein finanzielles Risiko dar, daher sollten sie immer aktiv sein."
+      "subtitle": "Banner erhöhen die Konversionsrate in Deinem Shop und stellen für Dich als Händler kein finanzielles Risiko dar, daher sollten sie immer aktiv sein.",
+      "appearance": "Darstellung",
+      "preview": "Vorschau",
+      "previewNoCredentials": "Gebe Deine PayPal-Zugangsdaten ein, um die Bannervorschau zu sehen.",
+      "previewSdkError": "Das PayPal SDK konnte nicht initialisiert werden. Bitte überprüfen Sie Ihre Client-ID.",
+      "previewNoOffers": "Für Dein Konto sind mit den aktuellen Einstellungen keine Pay-Later-Angebote verfügbar.",
+      "pageVisibility": "Seiten-Sichtbarkeit",
+      "pageVisibilitySubtitle": "Der Banner wird auf den folgenden Seiten angezeigt."
     },
     "spb": {
       "title": "Smart Payment Buttons"
@@ -98,6 +117,9 @@
         "invalid": "Registriert, aber mit abweichender Domain",
         "valid": "Gültig",
         "disabled": "Deaktiviert"
+      },
+      "honey": {
+        "info": "Der Webhook wird zur Registrierung verwendet. Dadurch werden alle nötigen Daten, die zur Aktivierung und nutzung des Verkaufskanals benötigt werden übermittelt."
       }
     },
     "crossBorder": {
@@ -110,6 +132,14 @@
     "environment": {
       "title": "Umgebung",
       "info": "PayPal sendet Bestellstatus-Updates über Webhooks an den Shop und fordert außerdem eine Neuberechnung des Warenkorbs an, wenn Kunden Änderungen in der PayPal Express Checkout-Benutzeroberfläche vornehmen. Wenn der Shop nicht öffentlich zugänglich ist (z. B. wenn es sich um eine Entwicklungs-/Staging-Umgebung handelt oder eine Authentifizierung erfordert), kannst du diese Instanz als \"lokale Umgebung\" kennzeichnen, um Verbindungsfehler zu vermeiden.\nBitte beachte, dass alle Webhook-Listener beim Speichern deregistriert werden."
+    },
+    "sdk": {
+      "title": "PayPal SDK Version 6",
+      "info": "Durch Aktivierung dieser Option wird die neueste Version der PayPal-Checkout-Integration, PayPal SDK v6, aktiviert. Version 6 bietet eine verbesserte Leistung und Sicherheit sowie eine bessere Kompatibilität mit modernen Zahlungsabläufen. Bitte beachten Sie, dass Theme-Anpassungen und Erweiterungen möglicherweise angepasst werden müssen.\nSDK v6 wird die Standardimplementierung ab Version 11 des PayPal-Plugins sein.",
+      "recommendation": "Wir empfehlen, diese Option zu aktivieren, um von den neuesten Funktionen und Verbesserungen zu profitieren.",
+      "bannerText": "Aktiviere das neueste PayPal SDK v6 für verbesserte Leistung und Sicherheit in Deinem Shop.",
+      "ineligible": "Das PayPal SDK v6 ist für dein PayPal-Konto noch nicht aktiviert. Du kannst es in deinem PayPal-Händlerkonto aktivieren.",
+      "undetermined": "Es konnte nicht ermittelt werden, ob das PayPal SDK v6 für dein PayPal-Konto aktiviert ist. Bitte stelle sicher, dass deine API-Zugangsdaten gültig sind und PayPal erreichbar ist."
     }
   },
   "swag-paypal-settings-sales-channel-switch": {

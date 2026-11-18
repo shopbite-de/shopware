@@ -1,3 +1,74 @@
+# 10.9.0
+- Fügt Unterstützung für das PayPal JS SDK v6 hinzu, das in den Einstellungen unter "Storefront-Darstellung" aktiviert werden kann, sobald es für das PayPal-Händlerkonto freigeschaltet ist. Es ist performanter und zeigt Zahlungsbuttons und "Später bezahlen"-Banner schneller an. Template-Anpassungen müssen gegebenenfalls angepasst werden wenn aktiviert. SDK v6 wird ab Version 11 die Standardimplementierung (shopware/SwagPayPal#257)
+- Behebt ein Problem, bei dem Express-Buttons im Listing nach dem Zurücknavigieren mit dem Browser-Zurück-Button mehrfach dargestellt wurden (shopware/SwagPayPal#856)
+- Behebt ein Problem, bei dem PayPal Express Checkout die Fehlermeldung nicht zuverlässig anzeigte, wenn die Checkout-Vorbereitung fehlschlug
+- Behebt ein Problem, bei dem die für Rechnungskauf eingegebene Telefonnummer bei abweichender Liefer- und Rechnungsadresse an der Lieferadresse statt an der Rechnungsadresse gespeichert wurde und die Zahlung dadurch fehlschlug (shopware/SwagPayPal#857)
+- Behebt ein Problem, bei dem das Setzen einer Transaktion auf "Bezahlt" über eine API-Integration ohne Berechtigungen für den PayPal-Umsatzbericht fehlschlug und Flows für den Status "Bezahlt" verhinderte, z. B. nach dem Wechsel von einer fehlgeschlagenen PayPal-Zahlung auf Vorkasse (shopware/shopware#21245)
+- Behebt ein Problem, bei dem der Link "Abbrechen und zurück zum Shop" auf der PayPal-Seite im PayPal Express Checkout auf `example.com` verwies (shopware/shopware#21430)
+- Behebt ein Problem, bei dem das Laden der PayPal-Händlerinformationen, z. B. in den PayPal-Einstellungen nach einem Onboarding, mit einem Fehler fehlschlug, wenn PayPal ein Produkt ohne Prüfstatus zurückgab (shopware/shopware#21346)
+- Behebt ein Problem, bei dem Verlängerungen von Kreditkarten-Abonnements fehlschlagen konnten, wenn die kartenausgebende Bank 3D Secure verlangte, da Verlängerungen eine Verifizierung anforderten und Abonnements nicht als wiederkehrende Kartenzahlungen gekennzeichnet waren (shopware/shopware#21069)
+- Behebt ein Problem, bei dem PayPal-Zahlungen und Zahlungen mit "Später bezahlen" weiterhin fehlschlugen, nachdem der Kunde den geänderten Bestellbetrag erneut freigegeben hatte, z. B. nach einer Mengenänderung auf der Bestellbestätigungsseite im PayPal Express Checkout (shopware/SwagPayPal#920)
+- Behebt ein Problem, bei dem PayPal-Konten nicht für zukünftige Einkäufe gespeichert wurden und Abonnements nicht verlängert werden konnten, wenn der Kunde einen geänderten Bestellbetrag erneut freigeben musste
+
+# 10.8.5
+- Behebt ein Problem, bei dem ausstehende PayPal-Zahlungseinzüge und -Autorisierungen nicht im Zahlungsstatus abgebildet wurden
+- Behebt ein Problem, bei dem verspätete PayPal-Abbruchantworten im Browser bereits laufende Zahlungen abbrechen konnten und negative Webhooks fälschlicherweise versuchten, vollständig oder teilweise bezahlte oder erstattete Transaktionen auf "Abgebrochen" zu setzen (shopware/shopware#19221)
+- Behebt ein Problem, bei dem PayPal-Zahlungen und Zahlungen mit "Später bezahlen" nach einer Änderung des freigegebenen Bestellbetrags fehlschlugen, anstatt den Kunden den neuen Betrag erneut freigeben zu lassen (shopware/SwagPayPal#759)
+- Fügt das Zusatzfeld `swag_paypal_agentic_commerce_sales_channel_id` hinzu, das bei über PayPal Agentic Commerce aufgegebenen Bestellungen den Agentic-Verkaufskanal speichert. Die Bestellübersicht der Administration kennzeichnet diese Bestellungen
+- Behebt ein Problem, bei dem die Einstellung "Gastkunde nach Bestellung ausloggen" bei Rechnungskauf dauerhaft ignoriert wurde, statt den Gast auszuloggen, sobald die Zahlungsinformationen angezeigt wurden (shopware/shopware#7962)
+- Behebt ein Problem, bei dem das PayPal JS in der Storefront mehrmals geladen werden konnte
+- Behebt ein Problem, bei dem Zahlungsmethoden trotz deaktiviertem Vautling für gemischte Abonnements zur Verfügung standen
+- Behebt ein Problem, bei dem PayPal-Konten und Karten nicht für zukünftige Käufe gespeichert wurden, wenn PayPal das Vaulting asynchron abschloss (shopware/SwagPayPal#845)
+- Fügt beim Update von einer älteren Plugin-Version den PayPal-Agentic-Commerce-Verkaufskanaltyp hinzu
+- Aktualisiert die Zahlungsbetragsgrenzen für P24 und „Später bezahlen“ (shopware/SwagPayPal#581)
+
+# 10.8.4
+- Behebt ein Problem, bei dem ein Update von einer benutzerdefinierten Plugin-Version Migrationen erneut ausführen, vorhandene PayPal-Konfigurationswerte überschreiben oder wegen veralteter Landing-Page-Einstellungen fehlschlagen konnte
+- Behebt ein Problem, bei dem Google Pay-Zahlungen, für die 3D Secure erforderlich war, nicht abgeschlossen wurden, da das Authentifizierungsfenster durch das Google Pay-Fenster überlagert wurde
+- Behebt ein Problem, bei dem Zahlungen mit gespeicherten Karten und wiederkehrende Zahlungen bei manuellem Zahlungseinzug (`AUTHORIZE`) mit `ACTION_DOES_NOT_MATCH_INTENT` fehlschlagen konnten
+
+# 10.8.3
+- Behebt ein Problem, bei dem Produktsuchen, die nur einen Teil der Felder laden (z. B. die Anfrage der Mengenauswahl zur Kaufmengenbegrenzung in der Storefront), mit einem Fehler fehlschlugen, wenn der Express-Checkout-Button für Produktlisten aktiviert war (shopware/SwagPayPal#554)
+
+# 10.8.2
+- Behebt ein Problem, bei dem PayPal-Bestellungen nicht abgeschlossen werden konnten, wenn die `updated_at`-Spalte der PayPal-Bestelltransaktionstabelle keine NULL-Werte zuließ
+- Behebt ein Problem, bei dem Positionsbezeichnungen mit Zeilenumbrüchen die Erstellung der PayPal-Bestellung für lokale Zahlungsarten wie iDEAL, P24, EPS oder Bancontact fehlschlagen ließen
+
+# 10.8.1
+- Behebt ein Problem, bei dem dieselbe PayPal-Bestellung für mehrere Shopware-Bestellungen verwendet werden konnte.
+- Behebt ein Problem, bei dem der von einem benutzerdefinierten Tax Provider angepasste Gesamtbetrag nicht berechnet wurde, weil die PayPal-Bestellung den veralteten Warenkorb- oder Bestelltransaktionsbetrag anstelle des besteuerten Gesamtbetrags verwendete (shopware/SwagPayPal#722)
+- Behebt ein Problem, bei dem die PayPal Express Checkout Buttons nach dem Zurücknavigieren vom Checkout mit dem Browser-Zurück-Button nicht mehr angezeigt wurden (shopware/shopware#18297)
+- Behebt ein Problem, bei dem die PayPal-Versandtracking-Synchronisierung 429 RATE_LIMIT_REACHED-Antworten zu früh erneut verarbeitet hat, anstatt den Retry-After-Header zu berücksichtigen.
+- Behebt ein Problem, bei dem im Kontextmenü der Erweiterungs-Kachel der rohe Snippet-Key statt „Konfigurieren” angezeigt wurde (shopware/shopware#19028)
+
+# 10.8.0
+- Behebt ein Problem, bei dem der PayPal Express Checkout ohne Rückmeldung für den Kunden fehlschlug, wenn in ein Land geliefert werden sollte, das dem Verkaufskanal nicht zugeordnet ist (shopware/shopware#15067)
+- Behebt ein Problem, bei dem Prüfungen zur Verfügbarkeit von PayPal-Zahlungsarten bei zustandslosen Store-API-Anfragen PHP-Sitzungen initialisierten (shopware/SwagPayPal#740)
+- Behebt ein Problem, bei dem PayPal Express Checkout in einem veralteten Offcanvas-Warenkorb die PayPal-API mit leerem Warenkorb aufrufen konnte und ohne Rückmeldung für den Kunden fehlschlug (shopware/SwagPayPal#712)
+- Behebt ein Problem, bei dem der Google Pay Button immer auf Englisch statt in der Verkaufskanal-Sprache angezeigt wurde (shopware/shopware#17804)
+- Behebt ein Problem, bei dem Kartenzahlungen ohne 3D-Secure-Daten abgelehnt wurden, obwohl `ACDC_FORCE_3DS` deaktiviert war (shopware/SwagPayPal#714)
+- Deaktiviertes „3D Secure erzwingen” erlaubt nun, dass keine 3DS-Abfrage erfolgt, wenn sie nicht erforderlich ist
+
+# 10.7.0
+- Fügt Unterstützung für PayPal App Switch hinzu (aktuell nur in den USA verfügbar)
+- Fügt vom Händler konfigurierbare Darstellungseinstellungen für das „Später bezahlen”-Ratenzahlungsbanner hinzu: Logo-Typ, Textfarbe und Textgröße
+- Behebt ein Problem, bei dem die Smart Payment Buttons unter Safari/iOS ohne sichtbare Rückmeldung fehlschlugen, wenn die AGB nicht akzeptiert wurden, indem der Nutzer nun zum betreffenden Feld geführt wird, anstatt sich auf die native Formularvalidierung des Browsers zu verlassen
+
+# 10.6.4
+- Behebt ein Problem, bei dem Netto-Preise den Express Checkout mit aktivem Versand-Callback fehlschlagen lies
+
+# 10.6.3
+- Behebt ein Problem, bei dem Versandkosten Diskrepanzen den Express Checkout mit aktivem Versand-Callback fehlschlagen lies
+
+# 10.6.2
+- Behebt ein Problem, bei dem veraltete Authorisations-Webhooks den Zahlungsstatus auf Abgebrochen setzen konnte
+- Behebt ein Problem, bei dem der Express Checkout fehlschlug, wenn der Käufer das Lieferland zu einem mit regelbasierten Versandarten änderte (shopware/shopware#16295).
+
+# 10.6.1
+- Behebt ein Problem, bei dem abgelehnte PayPal-Zahlungen in der Administration weiterhin als erstattungsfähig angezeigt wurden (shopware/SwagPayPal#547)
+- Behebt ein Problem, bei dem die Antwort des Versand-Callbacks im Express Checkout nicht unterstützte Bestellfelder enthielt
+- Behebt ein Problem, bei dem ACDC für Abonnements ohne Wallet-Vaulting verfügbar war
+
 # 10.6.0
 - Behebt ein Problem, bei dem PayPal-Webhooks mit einem `custom_id`-Payload ohne `orderTransactionId` eine Warnung wegen eines undefinierten Array-Keys ausloesen konnten
 - Behebt ein Problem, bei dem die PayPal-Bestellerstellung und Express-Checkout-Flows nicht den besteuerten Warenkorb mit Tax-Provider-Verarbeitung verwendet haben

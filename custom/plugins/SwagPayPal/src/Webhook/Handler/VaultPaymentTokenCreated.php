@@ -63,7 +63,7 @@ class VaultPaymentTokenCreated extends AbstractWebhookHandler
         }
 
         $criteria = new Criteria();
-        $criteria->addFilter(new EqualsFilter('customFields.' . SwagPayPal::ORDER_TRANSACTION_CUSTOM_FIELDS_PAYPAL_ORDER_ID, $resource->getId()));
+        $criteria->addFilter(new EqualsFilter('customFields.' . SwagPayPal::ORDER_TRANSACTION_CUSTOM_FIELDS_PAYPAL_ORDER_ID, $orderId));
         $criteria->addAssociation('order.orderCustomer');
         $criteria->addAssociation('order.subscription');
         $criteria->addSorting(new FieldSorting('createdAt', FieldSorting::DESCENDING));
@@ -82,7 +82,7 @@ class VaultPaymentTokenCreated extends AbstractWebhookHandler
         $struct = $this->paymentTransactionStructFactory->build($orderTransaction->getId(), $context);
 
         $paymentSource = $this->orderResource->get($orderId, $order->getSalesChannelId())->getPaymentSource()?->first(VaultablePaymentSourceInterface::class);
-        if ($paymentSource === null) {
+        if (!$paymentSource instanceof VaultablePaymentSourceInterface) {
             return;
         }
 
