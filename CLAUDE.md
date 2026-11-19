@@ -78,7 +78,7 @@ All routes follow the abstract-base + concrete-implementation pattern and are de
 - `/store-api/shopbite/business-hour` — Business hours per sales channel (day of week, open/close times)
 - `/store-api/shopbite/holiday` — Holiday/closure dates per sales channel
 - `/store-api/shopbite/multi-channel-group` — Sales channel groupings with domain associations
-- `/store-api/shopbite/config` — Plugin system config (`isCheckoutEnabled`, `defaultDeliveryTime`)
+- `/store-api/shopbite/config` — Shop config (`isCheckoutEnabled`, `menuCategoryId`, contact data, `shippingMethods` with fulfillment and lead time per shipping method)
 
 ### Entities (Shopware DAL)
 Four custom entity tables via migrations:
