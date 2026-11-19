@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "129918129d492a6587a6c0c2dd775c04",
+    "content-hash": "df842eb420b09f56f908a5ab642df634",
     "packages": [
         {
             "name": "async-aws/core",
@@ -6884,16 +6884,16 @@
         },
         {
             "name": "shopbite-de/shopware-plugin",
-            "version": "v1.10.1",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shopbite-de/shopware-plugin.git",
-                "reference": "cae1adc7eaf29ee6b726d61f4f5d122370787d19"
+                "reference": "394b615016f343ab0f0badd0306213e166ffe0f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shopbite-de/shopware-plugin/zipball/cae1adc7eaf29ee6b726d61f4f5d122370787d19",
-                "reference": "cae1adc7eaf29ee6b726d61f4f5d122370787d19",
+                "url": "https://api.github.com/repos/shopbite-de/shopware-plugin/zipball/394b615016f343ab0f0badd0306213e166ffe0f5",
+                "reference": "394b615016f343ab0f0badd0306213e166ffe0f5",
                 "shasum": ""
             },
             "require": {
@@ -6937,10 +6937,10 @@
             "description": "Shopware 6 Plugin for ShopBite Storefront",
             "support": {
                 "issues": "https://github.com/shopbite-de/shopware-plugin/issues",
-                "source": "https://github.com/shopbite-de/shopware-plugin/tree/v1.10.1"
+                "source": "https://github.com/shopbite-de/shopware-plugin/tree/v1.11.0"
             },
-            "time": "2026-11-18T14:42:57+00:00",
-            "published-time": "2026-11-18T14:44:18+00:00"
+            "time": "2026-11-19T07:56:09+00:00",
+            "published-time": "2026-11-19T13:56:51+00:00"
         },
         {
             "name": "shopware/administration",
